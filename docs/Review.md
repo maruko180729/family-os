@@ -7,6 +7,8 @@
 ## Alpha 0.4 — Polish Sprint
 *2026-06-27*
 
+**Preview:** https://family-os-woad-one.vercel.app
+
 ### 本次完成
 - Hero Card 高度优化（~20%降低）
 - 首页 AI 顾问改为自然语言段落
