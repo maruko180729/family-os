@@ -112,9 +112,10 @@ export type AssetGroup = "japan" | "china" | "investment" | "other";
 
 export interface AssetSnapshot {
   id: string;
-  month: string;   // "YYYY-MM"
+  month: string;      // "YYYY-MM"
   group: AssetGroup;
-  amount: number;  // JPY integer, total for this group
+  amount: number;     // JPY integer, total for this group
+  updatedAt?: string; // ISO date string, set on save
   note?: string;
 }
 

@@ -12,7 +12,7 @@ import LineChart from "@/components/LineChart";
 
 export default function AssetsPage() {
   const { month, display, prev, next, isCurrentMonth } = useMonth();
-  const { groups, netAsset, monthlyChange, trend, updateSnapshot, currentAmounts, hasData } = useAssets(month);
+  const { groups, netAsset, monthlyChange, trend, updateSnapshot, currentAmounts, hasData, lastUpdated } = useAssets(month);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const animatedNet = useCountUp(netAsset, 1200, 200);
@@ -71,7 +71,14 @@ export default function AssetsPage() {
 
       {/* Hero */}
       <HeroCard>
-        <p className="text-sm text-white/70 mb-1">家庭净资产</p>
+        <div className="flex items-start justify-between mb-1">
+          <p className="text-sm text-white/70">家庭净资产</p>
+          {lastUpdated && (
+            <p className="text-[10px] text-white/50">
+              更新于 {new Date(lastUpdated).toLocaleDateString("zh-CN", { month: "numeric", day: "numeric" })}
+            </p>
+          )}
+        </div>
         <p className="text-3xl font-bold tracking-tight text-white">
           ¥{animatedNet.toLocaleString()}
         </p>
@@ -89,29 +96,31 @@ export default function AssetsPage() {
 
       {/* 资产分类 */}
       <SectionCard label="资产分类">
-        {hasData ? (
-          <div className="space-y-3">
-            {groups.map(g => (
-              <div key={g.group} className="flex items-center justify-between">
-                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${g.colorClass}`}>
-                  {g.label}
-                </span>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-foreground">
-                    ¥{g.amount.toLocaleString()}
-                  </p>
-                  {g.change !== 0 && (
-                    <p className={`text-xs ${g.change > 0 ? "text-primary" : "text-destructive"}`}>
-                      {g.change > 0 ? "+" : ""}¥{g.change.toLocaleString()}
+        <div className="space-y-3">
+          {groups.map(g => (
+            <div key={g.group} className="flex items-center justify-between">
+              <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${g.colorClass}`}>
+                {g.label}
+              </span>
+              <div className="text-right">
+                {g.recorded ? (
+                  <>
+                    <p className="text-sm font-semibold text-foreground">
+                      ¥{g.amount.toLocaleString()}
                     </p>
-                  )}
-                </div>
+                    {g.change !== 0 && (
+                      <p className={`text-xs ${g.change > 0 ? "text-primary" : "text-destructive"}`}>
+                        {g.change > 0 ? "+" : ""}¥{g.change.toLocaleString()}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-sm font-medium text-muted-foreground">—</p>
+                )}
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground text-center py-4">暂无本月快照数据</p>
-        )}
+            </div>
+          ))}
+        </div>
       </SectionCard>
 
       {/* AI 家庭顾问 */}

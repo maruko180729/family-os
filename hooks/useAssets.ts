@@ -8,9 +8,9 @@ const GROUPS: AssetGroup[] = ["japan", "china", "investment", "other"];
 
 export const GROUP_META: Record<AssetGroup, { label: string; colorClass: string; dotClass: string }> = {
   japan:      { label: "日本资产", colorClass: "bg-blue-50 text-blue-700",   dotClass: "bg-blue-400"   },
-  china:      { label: "中国资产", colorClass: "bg-amber-50 text-amber-700", dotClass: "bg-amber-400"  },
-  investment: { label: "投资资产", colorClass: "bg-accent text-primary",     dotClass: "bg-primary"    },
-  other:      { label: "其它资产", colorClass: "bg-purple-50 text-purple-700", dotClass: "bg-purple-400" },
+  china:      { label: "中国资产", colorClass: "bg-orange-50 text-orange-600", dotClass: "bg-orange-400" },
+  investment: { label: "投资资产", colorClass: "bg-green-50 text-green-700", dotClass: "bg-green-500"  },
+  other:      { label: "其它资产", colorClass: "bg-gray-100 text-gray-500",  dotClass: "bg-gray-400"   },
 };
 
 export interface AssetGroupInfo {
@@ -20,6 +20,7 @@ export interface AssetGroupInfo {
   dotClass: string;
   amount: number;
   change: number;
+  recorded: boolean; // false = show "—"
 }
 
 function prevMonth(month: string): string {
@@ -38,17 +39,27 @@ export function useAssets(month: string) {
   const cur = snapshots.filter(s => s.month === month);
   const prev = snapshots.filter(s => s.month === prevMonth(month));
 
-  const groups: AssetGroupInfo[] = GROUPS.map(g => ({
-    group: g,
-    ...GROUP_META[g],
-    amount: sumGroup(cur, g),
-    change: sumGroup(cur, g) - sumGroup(prev, g),
-  }));
+  const groups: AssetGroupInfo[] = GROUPS.map(g => {
+    const snap = cur.find(s => s.group === g);
+    const amount = snap?.amount ?? 0;
+    return {
+      group: g,
+      ...GROUP_META[g],
+      amount,
+      change: amount - sumGroup(prev, g),
+      recorded: snap !== undefined,
+    };
+  });
 
   const netAsset = groups.reduce((s, g) => s + g.amount, 0);
   const prevNetAsset = GROUPS.reduce((s, g) => s + sumGroup(prev, g), 0);
   const monthlyChange = netAsset - prevNetAsset;
   const hasData = cur.length > 0;
+
+  // Last update time for the current month's snapshots
+  const lastUpdated = cur.length > 0
+    ? cur.reduce((latest, s) => s.updatedAt && s.updatedAt > (latest ?? "") ? s.updatedAt : latest, undefined as string | undefined)
+    : undefined;
 
   // Trend: all months with data, sorted, net per month
   const months = [...new Set(snapshots.map(s => s.month))].sort();
@@ -63,12 +74,14 @@ export function useAssets(month: string) {
 
   const updateSnapshot = useCallback(
     (amounts: Record<AssetGroup, number>) => {
+      const now = new Date().toISOString();
       const others = snapshots.filter(s => s.month !== month);
       const newSnaps: AssetSnapshot[] = GROUPS.map(g => ({
         id: `snap-${month}-${g}`,
         month,
         group: g,
         amount: amounts[g],
+        updatedAt: now,
       }));
       const updated = [...others, ...newSnaps];
       setSnapshots(updated);
@@ -77,5 +90,5 @@ export function useAssets(month: string) {
     [snapshots, month]
   );
 
-  return { groups, netAsset, monthlyChange, trend, updateSnapshot, currentAmounts, hasData };
+  return { groups, netAsset, monthlyChange, trend, updateSnapshot, currentAmounts, hasData, lastUpdated };
 }
