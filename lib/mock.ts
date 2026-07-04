@@ -3,6 +3,7 @@
 
 import type {
   Member, Asset, Income, Expense, Goal, Reminder, Timeline, AssetTrendPoint, AppSettings,
+  AssetSnapshot,
 } from "./types";
 
 export const mockSettings: AppSettings = {
@@ -122,6 +123,72 @@ export const mockAssetTrend: AssetTrendPoint[] = [
   { month: "2025-04", netAsset: 13300000 },
   { month: "2025-05", netAsset: 13362000 },
   { month: "2025-06", netAsset: 13580000 },
+];
+
+// Sprint 2 — Asset Snapshots (monthly, one record per group per month)
+// Net asset per month = japan + china + investment + other
+// Aligned with mockAssetTrend numbers above
+export const mockAssetSnapshots: AssetSnapshot[] = [
+  // 2024-07  net: 11,800,000
+  { id: "s-2024-07-japan",      month: "2024-07", group: "japan",      amount: 3700000 },
+  { id: "s-2024-07-china",      month: "2024-07", group: "china",      amount: 3500000 },
+  { id: "s-2024-07-investment", month: "2024-07", group: "investment", amount: 3500000 },
+  { id: "s-2024-07-other",      month: "2024-07", group: "other",      amount: 1100000 },
+  // 2024-08  net: 12,000,000
+  { id: "s-2024-08-japan",      month: "2024-08", group: "japan",      amount: 3750000 },
+  { id: "s-2024-08-china",      month: "2024-08", group: "china",      amount: 3500000 },
+  { id: "s-2024-08-investment", month: "2024-08", group: "investment", amount: 3600000 },
+  { id: "s-2024-08-other",      month: "2024-08", group: "other",      amount: 1150000 },
+  // 2024-09  net: 12,150,000
+  { id: "s-2024-09-japan",      month: "2024-09", group: "japan",      amount: 3800000 },
+  { id: "s-2024-09-china",      month: "2024-09", group: "china",      amount: 3550000 },
+  { id: "s-2024-09-investment", month: "2024-09", group: "investment", amount: 3650000 },
+  { id: "s-2024-09-other",      month: "2024-09", group: "other",      amount: 1150000 },
+  // 2024-10  net: 12,200,000
+  { id: "s-2024-10-japan",      month: "2024-10", group: "japan",      amount: 3850000 },
+  { id: "s-2024-10-china",      month: "2024-10", group: "china",      amount: 3550000 },
+  { id: "s-2024-10-investment", month: "2024-10", group: "investment", amount: 3650000 },
+  { id: "s-2024-10-other",      month: "2024-10", group: "other",      amount: 1150000 },
+  // 2024-11  net: 12,400,000
+  { id: "s-2024-11-japan",      month: "2024-11", group: "japan",      amount: 3900000 },
+  { id: "s-2024-11-china",      month: "2024-11", group: "china",      amount: 3550000 },
+  { id: "s-2024-11-investment", month: "2024-11", group: "investment", amount: 3800000 },
+  { id: "s-2024-11-other",      month: "2024-11", group: "other",      amount: 1150000 },
+  // 2024-12  net: 12,600,000
+  { id: "s-2024-12-japan",      month: "2024-12", group: "japan",      amount: 4000000 },
+  { id: "s-2024-12-china",      month: "2024-12", group: "china",      amount: 3600000 },
+  { id: "s-2024-12-investment", month: "2024-12", group: "investment", amount: 3850000 },
+  { id: "s-2024-12-other",      month: "2024-12", group: "other",      amount: 1150000 },
+  // 2025-01  net: 12,800,000
+  { id: "s-2025-01-japan",      month: "2025-01", group: "japan",      amount: 4000000 },
+  { id: "s-2025-01-china",      month: "2025-01", group: "china",      amount: 3600000 },
+  { id: "s-2025-01-investment", month: "2025-01", group: "investment", amount: 4050000 },
+  { id: "s-2025-01-other",      month: "2025-01", group: "other",      amount: 1150000 },
+  // 2025-02  net: 13,000,000
+  { id: "s-2025-02-japan",      month: "2025-02", group: "japan",      amount: 4050000 },
+  { id: "s-2025-02-china",      month: "2025-02", group: "china",      amount: 3600000 },
+  { id: "s-2025-02-investment", month: "2025-02", group: "investment", amount: 4200000 },
+  { id: "s-2025-02-other",      month: "2025-02", group: "other",      amount: 1150000 },
+  // 2025-03  net: 13,150,000
+  { id: "s-2025-03-japan",      month: "2025-03", group: "japan",      amount: 4100000 },
+  { id: "s-2025-03-china",      month: "2025-03", group: "china",      amount: 3600000 },
+  { id: "s-2025-03-investment", month: "2025-03", group: "investment", amount: 4300000 },
+  { id: "s-2025-03-other",      month: "2025-03", group: "other",      amount: 1150000 },
+  // 2025-04  net: 13,300,000
+  { id: "s-2025-04-japan",      month: "2025-04", group: "japan",      amount: 4100000 },
+  { id: "s-2025-04-china",      month: "2025-04", group: "china",      amount: 3650000 },
+  { id: "s-2025-04-investment", month: "2025-04", group: "investment", amount: 4400000 },
+  { id: "s-2025-04-other",      month: "2025-04", group: "other",      amount: 1150000 },
+  // 2025-05  net: 13,362,000
+  { id: "s-2025-05-japan",      month: "2025-05", group: "japan",      amount: 4150000 },
+  { id: "s-2025-05-china",      month: "2025-05", group: "china",      amount: 3650000 },
+  { id: "s-2025-05-investment", month: "2025-05", group: "investment", amount: 4420000 },
+  { id: "s-2025-05-other",      month: "2025-05", group: "other",      amount: 1142000 },
+  // 2025-06  net: 13,580,000
+  { id: "s-2025-06-japan",      month: "2025-06", group: "japan",      amount: 4200000 },
+  { id: "s-2025-06-china",      month: "2025-06", group: "china",      amount: 3800000 },
+  { id: "s-2025-06-investment", month: "2025-06", group: "investment", amount: 4500000 },
+  { id: "s-2025-06-other",      month: "2025-06", group: "other",      amount: 1080000 },
 ];
 
 // Derived helpers

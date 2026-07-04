@@ -106,6 +106,18 @@ export interface AssetTrendPoint {
   netAsset: number;
 }
 
+// Sprint 2 — Asset Snapshot model
+// Monthly snapshot: user enters current total per group once a month
+export type AssetGroup = "japan" | "china" | "investment" | "other";
+
+export interface AssetSnapshot {
+  id: string;
+  month: string;   // "YYYY-MM"
+  group: AssetGroup;
+  amount: number;  // JPY integer, total for this group
+  note?: string;
+}
+
 export interface AppSettings {
   familyName: string;
   primaryCurrency: string;

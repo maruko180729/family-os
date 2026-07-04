@@ -8,7 +8,7 @@ export default function GrowthPage() {
     <div className="pt-12 space-y-4">
       <div className="pb-1">
         <p className="text-sm text-muted-foreground mb-1">目标管理</p>
-        <h1 className="text-2xl font-semibold text-foreground">成长</h1>
+        <h1 className="text-2xl font-semibold text-foreground">未来</h1>
       </div>
 
       <div className="space-y-3">

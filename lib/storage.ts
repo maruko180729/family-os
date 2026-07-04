@@ -1,10 +1,10 @@
 // Family OS — LocalStorage abstraction (Alpha)
 // Drop-in replacement: swap get/set implementations for Supabase in Beta.
 
-import type { Member, Asset, Goal, Reminder, Timeline, Income, Expense } from "./types";
+import type { Member, Asset, Goal, Reminder, Timeline, Income, Expense, AssetSnapshot } from "./types";
 import {
   mockMembers, mockAssets, mockGoals, mockReminders, mockTimeline,
-  mockIncome, mockExpenses,
+  mockIncome, mockExpenses, mockAssetSnapshots,
 } from "./mock";
 
 const PREFIX = "family-os";
@@ -55,3 +55,7 @@ export const saveIncome = (v: Income[]) => save("income", v);
 // Expenses
 export const getExpenses = (): Expense[] => load("expenses", mockExpenses);
 export const saveExpenses = (v: Expense[]) => save("expenses", v);
+
+// Asset Snapshots (Sprint 2)
+export const getAssetSnapshots = (): AssetSnapshot[] => load("assetSnapshots", mockAssetSnapshots);
+export const saveAssetSnapshots = (v: AssetSnapshot[]) => save("assetSnapshots", v);

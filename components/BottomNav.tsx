@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BarChart3, TrendingUp, Target, MoreHorizontal } from "lucide-react";
+import { Home, BarChart3, TrendingUp, Sparkles, Users } from "lucide-react";
 
 const tabs = [
-  { href: "/",           label: "今天", icon: Home         },
-  { href: "/management", label: "经营", icon: BarChart3     },
-  { href: "/assets",     label: "资产", icon: TrendingUp    },
-  { href: "/growth",     label: "成长", icon: Target        },
-  { href: "/more",       label: "更多", icon: MoreHorizontal },
+  { href: "/",           label: "今天", icon: Home      },
+  { href: "/management", label: "经营", icon: BarChart3  },
+  { href: "/assets",     label: "资产", icon: TrendingUp },
+  { href: "/growth",     label: "未来", icon: Sparkles   },
+  { href: "/family",     label: "家",   icon: Users      },
 ];
 
 export default function BottomNav() {
