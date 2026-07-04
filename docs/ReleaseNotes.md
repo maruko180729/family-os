@@ -2,6 +2,30 @@
 
 ---
 
+## Sprint 0 — Foundation
+*2026-07-04*
+
+### 新增
+- `lib/types.ts` — 完整 TypeScript 类型系统（9种数据结构）
+- `lib/mock.ts` — 真实家庭 Mock Data（徐瑞家庭数据）
+- `lib/storage.ts` — LocalStorage 读写封装（面向 Supabase 迁移设计）
+- 组件库：`HeroCard` / `SectionCard` / `MetricCard` / `GoalCard` / `ReminderCard` / `MemberCard` / `StatRow` / `InputCard` / `TimelineCard` / `EmptyState`
+- `components/ui/index.ts` — 统一组件导出入口
+- `docs/Database.md` — 完整数据库 Schema（9张表）
+- `docs/LifeCycle.md` — 开发生命周期规范
+- `docs/CHANGELOG.md` — 版本变更记录
+
+### 修改
+- 所有页面改用 Mock Data 驱动，无硬编码字符串
+- 所有页面统一使用组件库，消除重复布局代码
+- 成长页 GoalCard 进度由数据计算，不再写死
+
+### 待确认
+- 数据库 Schema 是否满足需求
+- 组件 API 设计是否合理
+
+---
+
 ## Alpha 0.4 — Polish Sprint
 *2026-06-27*
 
