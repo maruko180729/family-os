@@ -28,24 +28,25 @@ export interface Asset {
   note?: string;
 }
 
-export type IncomeSource = "salary" | "business" | "investment" | "other";
+export type IncomeSource = "salary" | "spouse" | "other";
 
 export interface Income {
   id: string;
-  month: string;
+  month: string;       // "YYYY-MM"
   source: IncomeSource;
-  label: string;
   amount: number;
-  memberId?: string;
+  date: string;        // "YYYY-MM-DD"
   note?: string;
 }
 
+export type ExpenseCategory = "fixed" | "credit" | "other";
+
 export interface Expense {
   id: string;
-  month: string;
-  label: string;
+  month: string;       // "YYYY-MM"
+  category: ExpenseCategory;
   amount: number;
-  category: "medical" | "travel" | "home" | "education" | "other";
+  date: string;        // "YYYY-MM-DD"
   note?: string;
 }
 

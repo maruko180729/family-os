@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronRight, Leaf, TrendingUp, Gift, Shield, Calendar, Settings, Info } from "lucide-react";
+import { ChevronRight, Home, Leaf, TrendingUp, Gift, Shield, Calendar, Settings, Info } from "lucide-react";
+import Link from "next/link";
 import { SectionCard } from "@/components/ui/SectionCard";
 
 const taxItems = [
@@ -69,6 +70,20 @@ export default function MorePage() {
           })}
         </div>
       </SectionCard>
+
+      {/* 家页面入口 */}
+      <Link href="/" className="block bg-accent rounded-3xl p-5 border border-border active:scale-95 transition-transform">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center">
+            <Home size={18} className="text-white" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">今天</p>
+            <p className="text-xs text-muted-foreground">家庭概览与每日提醒</p>
+          </div>
+          <ChevronRight size={16} className="text-muted-foreground ml-auto" />
+        </div>
+      </Link>
 
       {/* 月度回顾入口 */}
       <div className="bg-accent rounded-3xl p-5 border border-border">

@@ -27,14 +27,15 @@ export const mockAssets: Asset[] = [
 ];
 
 export const mockIncome: Income[] = [
-  { id: "i1", month: "2025-06", source: "salary",     label: "工资收入",   amount: 280000, memberId: "m1" },
-  { id: "i2", month: "2025-06", source: "investment", label: "投资收益",   amount: 48000 },
-  { id: "i3", month: "2025-06", source: "business",   label: "公司收入",   amount: 150000, memberId: "m2" },
+  { id: "i1", month: "2025-06", source: "salary", amount: 280000, date: "2025-06-25" },
+  { id: "i2", month: "2025-06", source: "spouse", amount: 150000, date: "2025-06-30" },
+  { id: "i3", month: "2025-06", source: "other",  amount: 48000,  date: "2025-06-28", note: "投资收益" },
 ];
 
 export const mockExpenses: Expense[] = [
-  { id: "e1", month: "2025-06", label: "一次性支出",   amount: 65000,  category: "other" },
-  { id: "e2", month: "2025-06", label: "公司收入波动", amount: 45000,  category: "other" },
+  { id: "e1", month: "2025-06", category: "fixed",  amount: 180000, date: "2025-06-01", note: "房租+水电+保险" },
+  { id: "e2", month: "2025-06", category: "credit", amount: 65000,  date: "2025-06-27" },
+  { id: "e3", month: "2025-06", category: "other",  amount: 32000,  date: "2025-06-15", note: "医疗+日用" },
 ];
 
 export const mockGoals: Goal[] = [

@@ -5,7 +5,7 @@ import { HeroCard } from "@/components/ui/HeroCard";
 import { SectionCard } from "@/components/ui/SectionCard";
 import { StatRow } from "@/components/ui/StatRow";
 import LineChart from "@/components/LineChart";
-import { mockAssets, mockAssetTrend, mockIncome, mockExpenses, getNetAsset } from "@/lib/mock";
+import { mockAssets, mockAssetTrend, getNetAsset } from "@/lib/mock";
 
 const assetColorMap: Record<string, string> = {
   emergency:  "bg-blue-100 text-blue-700",
@@ -33,8 +33,12 @@ const assetCategories = mockAssets.filter(a => a.category !== "liability");
 const assetTotal = assetCategories.reduce((s, a) => s + a.amount, 0);
 
 const monthlyChangeItems = [
-  ...mockIncome.map(i => ({ label: i.label, value: `+¥${i.amount.toLocaleString()}`, positive: true })),
-  ...mockExpenses.map(e => ({ label: e.label, value: `-¥${e.amount.toLocaleString()}`, positive: false })),
+  { label: "工资收入",   value: "+¥280,000", positive: true  },
+  { label: "配偶入金",   value: "+¥150,000", positive: true  },
+  { label: "其他收入",   value: "+¥48,000",  positive: true  },
+  { label: "固定支出",   value: "-¥180,000", positive: false },
+  { label: "信用卡合计", value: "-¥65,000",  positive: false },
+  { label: "其他支出",   value: "-¥32,000",  positive: false },
 ];
 
 export default function AssetsPage() {
