@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+import { MonthSelector } from "@/components/MonthSelector";
 import { HeroCard } from "@/components/ui/HeroCard";
 import { SectionCard } from "@/components/ui/SectionCard";
 import { InputCard } from "@/components/ui/InputCard";
@@ -39,25 +40,7 @@ export default function ReviewPage() {
 
   return (
     <div className="pt-10 space-y-4">
-      <div className="flex items-center justify-between pb-1">
-        <button
-          onClick={prev}
-          className="w-9 h-9 flex items-center justify-center rounded-xl bg-muted active:scale-90 transition-transform"
-        >
-          <ChevronLeft size={18} className="text-muted-foreground" />
-        </button>
-        <div className="text-center">
-          <h1 className="text-base font-semibold text-foreground">{display}</h1>
-          <p className="text-xs text-muted-foreground">月度回顾</p>
-        </div>
-        <button
-          onClick={next}
-          disabled={isLastReviewable}
-          className="w-9 h-9 flex items-center justify-center rounded-xl bg-muted active:scale-90 transition-transform disabled:opacity-30"
-        >
-          <ChevronRight size={18} className="text-muted-foreground" />
-        </button>
-      </div>
+      <MonthSelector display={display} subtitle="月度回顾" prev={prev} next={next} disableNext={isLastReviewable} />
 
       <HeroCard>
         <p className="text-sm text-white/70 mb-1">净资产变化</p>

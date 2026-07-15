@@ -10,24 +10,6 @@ export interface Member {
   note?: string;
 }
 
-export type AssetCategory =
-  | "emergency"
-  | "investment"
-  | "domestic"
-  | "startup"
-  | "company"
-  | "liability";
-
-export interface Asset {
-  id: string;
-  name: string;
-  category: AssetCategory;
-  amount: number; // JPY integer
-  currency: string;
-  month: string; // "YYYY-MM"
-  note?: string;
-}
-
 export type IncomeSource = "salary" | "spouse" | "other";
 
 export interface Income {
@@ -100,11 +82,6 @@ export interface Timeline {
   happyMoment?: string;
   aiSummary?: string;
   status: "draft" | "published";
-}
-
-export interface AssetTrendPoint {
-  month: string; // "YYYY-MM"
-  netAsset: number;
 }
 
 // Sprint 2 — Asset Snapshot model

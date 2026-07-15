@@ -2,11 +2,11 @@
 // Drop-in replacement: swap get/set implementations for Supabase in Beta.
 
 import type {
-  Member, Asset, Goal, Reminder, Timeline, Income, Expense, AssetSnapshot,
+  Member, Goal, Reminder, Timeline, Income, Expense, AssetSnapshot,
   Company, Vehicle, FamilyDocument, Milestone,
 } from "./types";
 import {
-  mockMembers, mockAssets, mockGoals, mockReminders, mockTimeline,
+  mockMembers, mockGoals, mockReminders, mockTimeline,
   mockIncome, mockExpenses, mockAssetSnapshots,
   mockCompanies, mockVehicles, mockDocuments, mockMilestones,
 } from "./mock";
@@ -35,10 +35,6 @@ function save<T>(name: string, value: T): void {
 // Members
 export const getMembers = (): Member[] => load("members", mockMembers);
 export const saveMembers = (v: Member[]) => save("members", v);
-
-// Assets
-export const getAssets = (): Asset[] => load("assets", mockAssets);
-export const saveAssets = (v: Asset[]) => save("assets", v);
 
 // Goals
 export const getGoals = (): Goal[] => load("goals", mockGoals);

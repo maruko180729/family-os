@@ -2,7 +2,7 @@
 // Real family data for Xu Rui household. Replace with LocalStorage/Supabase in Beta.
 
 import type {
-  Member, Asset, Income, Expense, Goal, Reminder, Timeline, AssetTrendPoint, AppSettings,
+  Member, Income, Expense, Goal, Reminder, Timeline, AppSettings,
   AssetSnapshot, Company, Vehicle, FamilyDocument, Milestone,
 } from "./types";
 
@@ -16,15 +16,6 @@ export const mockMembers: Member[] = [
   { id: "m1", name: "徐瑞", role: "会社員", avatar: "👨", note: "家庭财务负责人" },
   { id: "m2", name: "配偶", role: "経営者", avatar: "👩", note: "公司经营管理" },
   { id: "m3", name: "Maruko", role: "8歳", avatar: "👧", note: "成长记录中", birthDate: "2017-03-07" },
-];
-
-export const mockAssets: Asset[] = [
-  { id: "a1", name: "应急资金", category: "emergency",  amount: 1500000,  currency: "JPY", month: "2025-06" },
-  { id: "a2", name: "投资资产", category: "investment", amount: 4200000,  currency: "JPY", month: "2025-06" },
-  { id: "a3", name: "国内资产", category: "domestic",   amount: 3800000,  currency: "JPY", month: "2025-06" },
-  { id: "a4", name: "创业资金", category: "startup",    amount: 2500000,  currency: "JPY", month: "2025-06" },
-  { id: "a5", name: "公司资产", category: "company",    amount: 2580000,  currency: "JPY", month: "2025-06" },
-  { id: "a6", name: "负债",     category: "liability",  amount: -1000000, currency: "JPY", month: "2025-06" },
 ];
 
 export const mockIncome: Income[] = [
@@ -107,22 +98,6 @@ export const mockTimeline: Timeline[] = [
     aiSummary: "本月净资产增加 21.8万，主要来源为工资与投资收益。NISA 完成全年定投计划。建议10月提前规划故乡纳税。",
     status: "published",
   },
-];
-
-// Asset trend: last 12 months net asset in JPY
-export const mockAssetTrend: AssetTrendPoint[] = [
-  { month: "2024-07", netAsset: 11800000 },
-  { month: "2024-08", netAsset: 12000000 },
-  { month: "2024-09", netAsset: 12150000 },
-  { month: "2024-10", netAsset: 12200000 },
-  { month: "2024-11", netAsset: 12400000 },
-  { month: "2024-12", netAsset: 12600000 },
-  { month: "2025-01", netAsset: 12800000 },
-  { month: "2025-02", netAsset: 13000000 },
-  { month: "2025-03", netAsset: 13150000 },
-  { month: "2025-04", netAsset: 13300000 },
-  { month: "2025-05", netAsset: 13362000 },
-  { month: "2025-06", netAsset: 13580000 },
 ];
 
 // Sprint 2 — Asset Snapshots (monthly, one record per group per month)
@@ -214,15 +189,6 @@ export const mockMilestones: Milestone[] = [
   { id: "ms4", date: "2027", title: "计划申请永住",    emoji: "🏠" },
   { id: "ms5", date: "未来", title: "创业",            emoji: "🚀" },
 ];
-
-// Derived helpers
-export function getTotalAssets(): number {
-  return mockAssets.filter(a => a.category !== "liability").reduce((s, a) => s + a.amount, 0);
-}
-
-export function getTotalLiabilities(): number {
-  return Math.abs(mockAssets.filter(a => a.category === "liability").reduce((s, a) => s + a.amount, 0));
-}
 
 export function getPendingReminders(): Reminder[] {
   return mockReminders.filter(r => r.status === "pending");

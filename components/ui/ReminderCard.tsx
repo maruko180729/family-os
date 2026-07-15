@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, CheckCircle2 } from "lucide-react";
+import { Clock } from "lucide-react";
 import type { Reminder } from "@/lib/types";
 import { cn } from "@/lib/utils";
 

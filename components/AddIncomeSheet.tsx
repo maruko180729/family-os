@@ -17,7 +17,7 @@ interface Props {
   onSave: (source: IncomeSource, amount: number, date: string, note?: string) => void;
 }
 
-export default function AddIncomeSheet({ open, currentMonth, onClose, onSave }: Props) {
+export default function AddIncomeSheet({ open, onClose, onSave }: Props) {
   const today = new Date().toISOString().slice(0, 10);
   const [source, setSource] = useState<IncomeSource>("salary");
   const [amount, setAmount] = useState("");

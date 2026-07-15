@@ -17,7 +17,7 @@ interface Props {
   onSave: (category: ExpenseCategory, amount: number, date: string, note?: string) => void;
 }
 
-export default function AddExpenseSheet({ open, currentMonth, onClose, onSave }: Props) {
+export default function AddExpenseSheet({ open, onClose, onSave }: Props) {
   const today = new Date().toISOString().slice(0, 10);
   const [category, setCategory] = useState<ExpenseCategory>("fixed");
   const [amount, setAmount] = useState("");
