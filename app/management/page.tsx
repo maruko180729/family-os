@@ -9,6 +9,7 @@ import { useMonth } from "@/hooks/useMonth";
 import { useManagement } from "@/hooks/useManagement";
 import AddIncomeSheet from "@/components/AddIncomeSheet";
 import AddExpenseSheet from "@/components/AddExpenseSheet";
+import { toast } from "@/hooks/useToast";
 import type { IncomeSource, ExpenseCategory } from "@/lib/types";
 
 const INCOME_LABELS: Record<IncomeSource, string> = {
@@ -165,13 +166,25 @@ export default function ManagementPage() {
         open={incomeOpen}
         currentMonth={month}
         onClose={() => setIncomeOpen(false)}
-        onSave={addIncome}
+        onSave={(source, amount, date, note) => {
+          const saved = addIncome(source, amount, date, note);
+          if (saved !== month) {
+            const [y, m] = saved.split("-");
+            toast(`已保存到 ${y}年${parseInt(m)}月`);
+          }
+        }}
       />
       <AddExpenseSheet
         open={expenseOpen}
         currentMonth={month}
         onClose={() => setExpenseOpen(false)}
-        onSave={addExpense}
+        onSave={(category, amount, date, note) => {
+          const saved = addExpense(category, amount, date, note);
+          if (saved !== month) {
+            const [y, m] = saved.split("-");
+            toast(`已保存到 ${y}年${parseInt(m)}月`);
+          }
+        }}
       />
     </div>
   );

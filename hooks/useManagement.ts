@@ -16,24 +16,29 @@ export function useManagement(month: string) {
   const income = allIncome.filter(i => i.month === month);
   const expenses = allExpenses.filter(e => e.month === month);
 
+  // Returns the month the record was actually saved to (derived from date, not the viewed page month)
   const addIncome = useCallback(
-    (source: IncomeSource, amount: number, date: string, note?: string) => {
-      const entry: Income = { id: genId(), month, source, amount, date, note };
+    (source: IncomeSource, amount: number, date: string, note?: string): string => {
+      const recordMonth = date.slice(0, 7);
+      const entry: Income = { id: genId(), month: recordMonth, source, amount, date, note };
       const updated = [...getIncome(), entry];
       saveIncome(updated);
       setAllIncome(updated);
+      return recordMonth;
     },
-    [month]
+    []
   );
 
   const addExpense = useCallback(
-    (category: ExpenseCategory, amount: number, date: string, note?: string) => {
-      const entry: Expense = { id: genId(), month, category, amount, date, note };
+    (category: ExpenseCategory, amount: number, date: string, note?: string): string => {
+      const recordMonth = date.slice(0, 7);
+      const entry: Expense = { id: genId(), month: recordMonth, category, amount, date, note };
       const updated = [...getExpenses(), entry];
       saveExpenses(updated);
       setAllExpenses(updated);
+      return recordMonth;
     },
-    [month]
+    []
   );
 
   const deleteIncome = useCallback((id: string) => {
