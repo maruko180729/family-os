@@ -1,14 +1,26 @@
 "use client";
 
+import { useState } from "react";
 import { GoalCard } from "@/components/ui/GoalCard";
-import { mockGoals } from "@/lib/mock";
 import { getLatestNetAsset } from "@/hooks/useAssets";
+import { useGoals } from "@/hooks/useGoals";
+import { toast } from "@/hooks/useToast";
+import EditGoalSheet from "@/components/EditGoalSheet";
+import type { Goal } from "@/lib/types";
 
 export default function GrowthPage() {
   const { netAsset } = getLatestNetAsset();
-  const goals = mockGoals.map(g =>
+  const { goals, updateGoal } = useGoals();
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
+
+  const displayGoals = goals.map(g =>
     g.category === "asset" ? { ...g, currentValue: netAsset } : g
   );
+
+  function handleSave(updated: Goal) {
+    updateGoal(updated);
+    toast("目标已更新");
+  }
 
   return (
     <div className="pt-12 space-y-4">
@@ -18,10 +30,17 @@ export default function GrowthPage() {
       </div>
 
       <div className="space-y-3">
-        {goals.map(goal => (
-          <GoalCard key={goal.id} goal={goal} />
+        {displayGoals.map(goal => (
+          <GoalCard key={goal.id} goal={goal} onEdit={setEditingGoal} />
         ))}
       </div>
+
+      <EditGoalSheet
+        goal={editingGoal}
+        open={editingGoal !== null}
+        onClose={() => setEditingGoal(null)}
+        onSave={handleSave}
+      />
     </div>
   );
 }

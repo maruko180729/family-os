@@ -110,6 +110,11 @@ export interface Company {
   legalRepresentative: string; // member name
   foundedYear: string; // "YYYY"
   status: string; // e.g. "正常经营"
+  // Financial snapshot (editable in Sprint 5)
+  revenue?: number;          // 营业额 JPY
+  companyExpenses?: number;  // 支出 JPY
+  transferToFamily?: number; // 家庭转入 JPY
+  balance?: number;          // 余额 JPY
 }
 
 export interface Vehicle {

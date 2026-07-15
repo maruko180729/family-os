@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle, Pencil } from "lucide-react";
 import type { Goal } from "@/lib/types";
 import { getGoalProgress } from "@/lib/mock";
 import { cn } from "@/lib/utils";
@@ -14,10 +14,11 @@ const statusConfig = {
 
 interface GoalCardProps {
   goal: Goal;
+  onEdit?: (goal: Goal) => void;
   className?: string;
 }
 
-export function GoalCard({ goal, className }: GoalCardProps) {
+export function GoalCard({ goal, onEdit, className }: GoalCardProps) {
   const conf = statusConfig[goal.status];
   const Icon = conf.icon;
   const progress = getGoalProgress(goal);
@@ -40,9 +41,20 @@ export function GoalCard({ goal, className }: GoalCardProps) {
             </p>
           </div>
         </div>
-        <div className={cn("flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium", conf.bg, conf.color)}>
-          <Icon size={12} />
-          <span>{conf.label}</span>
+        <div className="flex items-center gap-2">
+          {onEdit && (
+            <button
+              onClick={() => onEdit(goal)}
+              className="w-7 h-7 flex items-center justify-center rounded-xl bg-muted active:scale-90 transition-transform"
+              aria-label="编辑目标"
+            >
+              <Pencil size={13} className="text-muted-foreground" />
+            </button>
+          )}
+          <div className={cn("flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium", conf.bg, conf.color)}>
+            <Icon size={12} />
+            <span>{conf.label}</span>
+          </div>
         </div>
       </div>
 

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
 import PageTransition from "@/components/PageTransition";
+import { ToastProvider } from "@/components/editing";
 
 export const metadata: Metadata = {
   title: "Family OS",
@@ -23,12 +24,14 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body>
-        <div className="min-h-screen max-w-[480px] mx-auto relative">
-          <main className="pb-24 px-4">
-            <PageTransition>{children}</PageTransition>
-          </main>
-          <BottomNav />
-        </div>
+        <ToastProvider>
+          <div className="min-h-screen max-w-[480px] mx-auto relative">
+            <main className="pb-24 px-4">
+              <PageTransition>{children}</PageTransition>
+            </main>
+            <BottomNav />
+          </div>
+        </ToastProvider>
       </body>
     </html>
   );
