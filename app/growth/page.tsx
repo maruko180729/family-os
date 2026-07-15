@@ -35,12 +35,15 @@ export default function GrowthPage() {
         ))}
       </div>
 
-      <EditGoalSheet
-        goal={editingGoal}
-        open={editingGoal !== null}
-        onClose={() => setEditingGoal(null)}
-        onSave={handleSave}
-      />
+      {editingGoal && (
+        <EditGoalSheet
+          key={editingGoal.id}
+          goal={editingGoal}
+          open
+          onClose={() => setEditingGoal(null)}
+          onSave={handleSave}
+        />
+      )}
     </div>
   );
 }

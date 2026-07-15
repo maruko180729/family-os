@@ -106,5 +106,17 @@ export function useAssets(month: string) {
     [snapshots, month]
   );
 
-  return { groups, netAsset, monthlyChange, trend, updateSnapshot, currentAmounts, hasData, lastUpdated };
+  const updateSingleGroup = useCallback(
+    (group: AssetGroup, amount: number) => {
+      const now = new Date().toISOString();
+      const others = snapshots.filter(s => !(s.month === month && s.group === group));
+      const entry: AssetSnapshot = { id: `snap-${month}-${group}`, month, group, amount, updatedAt: now };
+      const updated = [...others, entry];
+      setSnapshots(updated);
+      saveAssetSnapshots(updated);
+    },
+    [snapshots, month]
+  );
+
+  return { groups, netAsset, monthlyChange, trend, updateSnapshot, updateSingleGroup, currentAmounts, hasData, lastUpdated };
 }

@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import type { Milestone } from "@/lib/types";
 import { getMilestones, saveMilestones } from "@/lib/storage";
 
@@ -10,11 +9,8 @@ function genId() {
 }
 
 export function useMilestones() {
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-
-  useEffect(() => {
-    setMilestones(getMilestones());
-  }, []);
+  // Initialize directly from storage — no useEffect needed
+  const [milestones, setMilestones] = useState<Milestone[]>(() => getMilestones());
 
   const addMilestone = useCallback((date: string, title: string, emoji?: string) => {
     const entry: Milestone = { id: genId(), date, title, emoji: emoji || undefined };

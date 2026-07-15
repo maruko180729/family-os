@@ -5,9 +5,10 @@ import { useCountUp } from "@/hooks/useCountUp";
 import { HeroCard } from "@/components/ui/HeroCard";
 import { SectionCard } from "@/components/ui/SectionCard";
 import { ReminderCard } from "@/components/ui/ReminderCard";
-import { getReminders } from "@/lib/storage";
+import { useReminders } from "@/hooks/useReminders";
 import { getLatestNetAsset } from "@/hooks/useAssets";
 import { getIncome, getExpenses } from "@/lib/storage";
+
 
 function buildAdvisorText(): string {
   const now = new Date();
@@ -60,7 +61,8 @@ export default function TodayPage() {
   const netAsset = useCountUp(netAssetTarget, 1200, 200);
   const delta = useCountUp(deltaTarget, 900, 400);
 
-  const reminders = getReminders().filter(r => r.status === "pending");
+  const { reminders: allReminders } = useReminders();
+  const reminders = allReminders.filter(r => r.status === "pending");
   const advisorText = buildAdvisorText();
 
   const statusHealthy = deltaTarget >= 0;

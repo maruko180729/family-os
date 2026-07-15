@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import type { Timeline } from "@/lib/types";
 import { getTimeline, saveTimeline } from "@/lib/storage";
 
@@ -13,26 +12,34 @@ const empty = {
   happyMoment: "",
 };
 
-export function useReview(month: string) {
-  const [entry, setEntry] = useState(empty);
-  const [status, setStatus] = useState<Timeline["status"] | null>(null);
+function entryFromTimeline(all: Timeline[], month: string) {
+  const t = all.find(x => x.month === month);
+  if (!t) return empty;
+  return {
+    events: t.events ?? "",
+    incomeSummary: t.incomeSummary ?? "",
+    expenseSummary: t.expenseSummary ?? "",
+    nextFocus: t.nextFocus ?? "",
+    happyMoment: t.happyMoment ?? "",
+  };
+}
 
-  useEffect(() => {
-    const existing = getTimeline().find(t => t.month === month);
-    if (existing) {
-      setEntry({
-        events: existing.events ?? "",
-        incomeSummary: existing.incomeSummary ?? "",
-        expenseSummary: existing.expenseSummary ?? "",
-        nextFocus: existing.nextFocus ?? "",
-        happyMoment: existing.happyMoment ?? "",
-      });
-      setStatus(existing.status);
-    } else {
-      setEntry(empty);
-      setStatus(null);
-    }
-  }, [month]);
+export function useReview(month: string) {
+  // Store full timeline; derive entry from it so month changes are free of effects
+  const [timeline, setTimeline] = useState<Timeline[]>(() => getTimeline());
+  // Track the "active month" to detect prop changes during render
+  const [activeMonth, setActiveMonth] = useState(month);
+  const [entry, setEntry] = useState(() => entryFromTimeline(getTimeline(), month));
+
+  // React-approved "adjust state when prop changes" pattern (setState during render,
+  // not inside useEffect). This causes a single extra render on month change.
+  if (activeMonth !== month) {
+    setActiveMonth(month);
+    setEntry(entryFromTimeline(timeline, month));
+  }
+
+  const existing = timeline.find(t => t.month === month);
+  const status = existing?.status ?? null;
 
   const update = useCallback((field: keyof typeof empty, value: string) => {
     setEntry(prev => ({ ...prev, [field]: value }));
@@ -40,8 +47,6 @@ export function useReview(month: string) {
 
   const save = useCallback(
     (netAssetStart: number, netAssetEnd: number, aiSummary: string) => {
-      const all = getTimeline();
-      const others = all.filter(t => t.month !== month);
       const saved: Timeline = {
         id: `t-${month}`,
         month,
@@ -52,8 +57,9 @@ export function useReview(month: string) {
         aiSummary,
         status: "published",
       };
-      saveTimeline([...others, saved]);
-      setStatus("published");
+      const updated = [...getTimeline().filter(t => t.month !== month), saved];
+      saveTimeline(updated);
+      setTimeline(updated);
     },
     [month, entry]
   );

@@ -1,11 +1,12 @@
 "use client";
 
-import { Car } from "lucide-react";
+import { Car, Pencil } from "lucide-react";
 import type { Vehicle } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface VehicleCardProps {
   vehicles: Vehicle[];
+  onEdit?: (v: Vehicle) => void;
   className?: string;
 }
 
@@ -29,7 +30,7 @@ function formatDate(dateStr: string): string {
   return `${y}/${parseInt(m)}/${parseInt(d)}`;
 }
 
-export function VehicleCard({ vehicles, className }: VehicleCardProps) {
+export function VehicleCard({ vehicles, onEdit, className }: VehicleCardProps) {
   return (
     <div className={cn("bg-card rounded-3xl p-5 border border-border shadow-sm", className)}>
       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">
@@ -41,9 +42,19 @@ export function VehicleCard({ vehicles, className }: VehicleCardProps) {
           const insurance = urgency(v.insuranceExpiry);
           return (
             <div key={v.id}>
-              <div className="flex items-center gap-2 mb-2">
-                <Car size={15} className="text-muted-foreground" />
-                <p className="font-medium text-foreground text-sm">{v.name}</p>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Car size={15} className="text-muted-foreground" />
+                  <p className="font-medium text-foreground text-sm">{v.name}</p>
+                </div>
+                {onEdit && (
+                  <button
+                    onClick={() => onEdit(v)}
+                    className="p-1.5 rounded-full text-muted-foreground hover:text-foreground active:scale-90 transition-transform"
+                  >
+                    <Pencil size={13} />
+                  </button>
+                )}
               </div>
               <div className="pl-6 space-y-1.5">
                 <div className="flex items-center justify-between">
@@ -60,6 +71,18 @@ export function VehicleCard({ vehicles, className }: VehicleCardProps) {
                     <span className={cn("ml-2 font-medium", insurance.className)}>{insurance.label}</span>
                   </span>
                 </div>
+                {v.taxDate && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">税金</span>
+                    <span className="text-xs text-foreground">{formatDate(v.taxDate)}</span>
+                  </div>
+                )}
+                {v.nextService && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">下次保养</span>
+                    <span className="text-xs text-foreground">{v.nextService}</span>
+                  </div>
+                )}
               </div>
             </div>
           );

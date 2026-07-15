@@ -1,26 +1,15 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
+// Re-keying on pathname causes React to unmount/remount the subtree,
+// which Tailwind's animate-in picks up as a fresh entry animation.
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    setVisible(false);
-    const t = setTimeout(() => setVisible(true), 30);
-    return () => clearTimeout(t);
-  }, [pathname]);
-
   return (
     <div
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(8px)",
-        transition: "opacity 0.25s ease, transform 0.25s ease",
-      }}
+      key={pathname}
+      className="animate-in fade-in slide-in-from-bottom-2 duration-200"
     >
       {children}
     </div>

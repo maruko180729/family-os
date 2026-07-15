@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Pencil } from "lucide-react";
 import { MonthSelector } from "@/components/MonthSelector";
 import { HeroCard } from "@/components/ui/HeroCard";
 import { SectionCard } from "@/components/ui/SectionCard";
@@ -9,12 +9,15 @@ import { useMonth } from "@/hooks/useMonth";
 import { useAssets } from "@/hooks/useAssets";
 import { useCountUp } from "@/hooks/useCountUp";
 import UpdateAssetsSheet from "@/components/UpdateAssetsSheet";
+import SingleAssetSheet from "@/components/SingleAssetSheet";
+import type { AssetGroup } from "@/lib/types";
 import LineChart from "@/components/LineChart";
 
 export default function AssetsPage() {
   const { month, display, prev, next, isCurrentMonth } = useMonth();
-  const { groups, netAsset, monthlyChange, trend, updateSnapshot, currentAmounts, hasData, lastUpdated } = useAssets(month);
+  const { groups, netAsset, monthlyChange, trend, updateSnapshot, updateSingleGroup, currentAmounts, hasData, lastUpdated } = useAssets(month);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<AssetGroup | null>(null);
 
   const animatedNet = useCountUp(netAsset, 1200, 200);
 
@@ -86,21 +89,29 @@ export default function AssetsPage() {
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${g.colorClass}`}>
                 {g.label}
               </span>
-              <div className="text-right">
-                {g.recorded ? (
-                  <>
-                    <p className="text-sm font-semibold text-foreground">
-                      ¥{g.amount.toLocaleString()}
-                    </p>
-                    {g.change !== 0 && (
-                      <p className={`text-xs ${g.change > 0 ? "text-primary" : "text-destructive"}`}>
-                        {g.change > 0 ? "+" : ""}¥{g.change.toLocaleString()}
+              <div className="flex items-center gap-2">
+                <div className="text-right">
+                  {g.recorded ? (
+                    <>
+                      <p className="text-sm font-semibold text-foreground">
+                        ¥{g.amount.toLocaleString()}
                       </p>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-sm font-medium text-muted-foreground">—</p>
-                )}
+                      {g.change !== 0 && (
+                        <p className={`text-xs ${g.change > 0 ? "text-primary" : "text-destructive"}`}>
+                          {g.change > 0 ? "+" : ""}¥{g.change.toLocaleString()}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm font-medium text-muted-foreground">—</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => setEditingGroup(g.group)}
+                  className="p-1.5 rounded-full text-muted-foreground hover:text-foreground active:scale-90 transition-transform"
+                >
+                  <Pencil size={12} />
+                </button>
               </div>
             </div>
           ))}
@@ -128,6 +139,18 @@ export default function AssetsPage() {
         onClose={() => setSheetOpen(false)}
         onSave={updateSnapshot}
       />
+
+      {editingGroup && (
+        <SingleAssetSheet
+          key={editingGroup}
+          group={editingGroup}
+          currentAmount={currentAmounts[editingGroup]}
+          currentMonth={month}
+          open
+          onClose={() => setEditingGroup(null)}
+          onSave={(g, amount) => { updateSingleGroup(g, amount); setEditingGroup(null); }}
+        />
+      )}
     </div>
   );
 }

@@ -122,13 +122,20 @@ export interface Vehicle {
   name: string;
   nextInspection: string; // "YYYY-MM-DD"
   insuranceExpiry: string; // "YYYY-MM-DD"
+  taxDate?: string;        // 税金日期 "YYYY-MM-DD"
+  nextService?: string;    // 下次保养 "YYYY-MM-DD" or note
+  note?: string;
 }
 
 export interface FamilyDocument {
   id: string;
   ownerId: string; // Member id
-  label: string; // e.g. "永住申请计划"
-  date: string; // "YYYY" or "YYYY-MM-DD"
+  type?: string;   // "在留卡" | "护照" | "签证" | "其它"
+  label: string;
+  date: string;    // reference or expiry date "YYYY" or "YYYY-MM-DD"
+  expiryDate?: string;  // explicit expiry "YYYY-MM-DD"
+  remindDays?: number;  // days before expiry to surface reminder
+  note?: string;
 }
 
 export interface Milestone {
