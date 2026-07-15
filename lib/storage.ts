@@ -1,10 +1,14 @@
 // Family OS — LocalStorage abstraction (Alpha)
 // Drop-in replacement: swap get/set implementations for Supabase in Beta.
 
-import type { Member, Asset, Goal, Reminder, Timeline, Income, Expense, AssetSnapshot } from "./types";
+import type {
+  Member, Asset, Goal, Reminder, Timeline, Income, Expense, AssetSnapshot,
+  Company, Vehicle, FamilyDocument, Milestone,
+} from "./types";
 import {
   mockMembers, mockAssets, mockGoals, mockReminders, mockTimeline,
   mockIncome, mockExpenses, mockAssetSnapshots,
+  mockCompanies, mockVehicles, mockDocuments, mockMilestones,
 } from "./mock";
 
 const PREFIX = "family-os";
@@ -59,3 +63,19 @@ export const saveExpenses = (v: Expense[]) => save("expenses", v);
 // Asset Snapshots (Sprint 2)
 export const getAssetSnapshots = (): AssetSnapshot[] => load("assetSnapshots", mockAssetSnapshots);
 export const saveAssetSnapshots = (v: AssetSnapshot[]) => save("assetSnapshots", v);
+
+// Companies (Sprint 3)
+export const getCompanies = (): Company[] => load("companies", mockCompanies);
+export const saveCompanies = (v: Company[]) => save("companies", v);
+
+// Vehicles (Sprint 3)
+export const getVehicles = (): Vehicle[] => load("vehicles", mockVehicles);
+export const saveVehicles = (v: Vehicle[]) => save("vehicles", v);
+
+// Family documents / certificates (Sprint 3)
+export const getDocuments = (): FamilyDocument[] => load("documents", mockDocuments);
+export const saveDocuments = (v: FamilyDocument[]) => save("documents", v);
+
+// Family milestones (Sprint 3)
+export const getMilestones = (): Milestone[] => load("milestones", mockMilestones);
+export const saveMilestones = (v: Milestone[]) => save("milestones", v);

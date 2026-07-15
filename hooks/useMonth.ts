@@ -13,8 +13,12 @@ function formatDisplay(month: string): string {
   return `${y}年${parseInt(m)}月`;
 }
 
-export function useMonth() {
-  const [month, setMonth] = useState(() => toMonthStr(new Date()));
+export function useMonth(initialOffset = 0) {
+  const [month, setMonth] = useState(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() + initialOffset);
+    return toMonthStr(d);
+  });
 
   function prev() {
     const [y, m] = month.split("-").map(Number);

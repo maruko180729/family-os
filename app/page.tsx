@@ -5,14 +5,11 @@ import { useCountUp } from "@/hooks/useCountUp";
 import { HeroCard } from "@/components/ui/HeroCard";
 import { SectionCard } from "@/components/ui/SectionCard";
 import { ReminderCard } from "@/components/ui/ReminderCard";
-import { mockReminders, getNetAsset } from "@/lib/mock";
-import { mockTimeline } from "@/lib/mock";
-
-const latestTimeline = mockTimeline[mockTimeline.length - 1];
-const netAssetTarget = getNetAsset();
-const deltaTarget = latestTimeline?.netChange ?? 0;
+import { mockReminders } from "@/lib/mock";
+import { getLatestNetAsset } from "@/hooks/useAssets";
 
 export default function TodayPage() {
+  const { netAsset: netAssetTarget, change: deltaTarget } = getLatestNetAsset();
   const netAsset = useCountUp(netAssetTarget, 1200, 200);
   const delta = useCountUp(deltaTarget, 900, 400);
 

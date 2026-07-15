@@ -3,7 +3,7 @@
 
 import type {
   Member, Asset, Income, Expense, Goal, Reminder, Timeline, AssetTrendPoint, AppSettings,
-  AssetSnapshot,
+  AssetSnapshot, Company, Vehicle, FamilyDocument, Milestone,
 } from "./types";
 
 export const mockSettings: AppSettings = {
@@ -84,7 +84,7 @@ export const mockReminders: Reminder[] = [
   },
   {
     id: "r2", title: "Maruko 疫苗还有 18 天",
-    dueDate: "2025-07-15", category: "medical", status: "pending",
+    dueDate: "2025-07-15", category: "medical", status: "pending", relatedMemberId: "m3",
   },
   {
     id: "r3", title: "故乡纳税建议 10～11 月确认",
@@ -191,6 +191,30 @@ export const mockAssetSnapshots: AssetSnapshot[] = [
   { id: "s-2025-06-other",      month: "2025-06", group: "other",      amount: 1080000 },
 ];
 
+// Sprint 3 — Home/家 module
+export const mockCompanies: Company[] = [
+  { id: "c1", name: "晟森株式会社", legalRepresentative: "配偶", foundedYear: "2025", status: "正常经营" },
+];
+
+export const mockVehicles: Vehicle[] = [
+  { id: "v1", name: "MINI Cooper",  nextInspection: "2027-11-30", insuranceExpiry: "2026-12-31" },
+  { id: "v2", name: "Mercedes S",   nextInspection: "2026-08-31", insuranceExpiry: "2026-09-30" },
+];
+
+export const mockDocuments: FamilyDocument[] = [
+  { id: "d1", ownerId: "m1", label: "永住申请计划", date: "2027" },
+  { id: "d2", ownerId: "m1", label: "护照有效期",   date: "2032" },
+  { id: "d3", ownerId: "m1", label: "在留卡到期",   date: "2028" },
+];
+
+export const mockMilestones: Milestone[] = [
+  { id: "ms1", date: "2021", title: "结婚",           emoji: "💍" },
+  { id: "ms2", date: "2024", title: "Maruko 洗牙",     emoji: "🦷" },
+  { id: "ms3", date: "2026", title: "开始 NISA 定投",  emoji: "💹" },
+  { id: "ms4", date: "2027", title: "计划申请永住",    emoji: "🏠" },
+  { id: "ms5", date: "未来", title: "创业",            emoji: "🚀" },
+];
+
 // Derived helpers
 export function getTotalAssets(): number {
   return mockAssets.filter(a => a.category !== "liability").reduce((s, a) => s + a.amount, 0);
@@ -198,10 +222,6 @@ export function getTotalAssets(): number {
 
 export function getTotalLiabilities(): number {
   return Math.abs(mockAssets.filter(a => a.category === "liability").reduce((s, a) => s + a.amount, 0));
-}
-
-export function getNetAsset(): number {
-  return mockAssets.reduce((s, a) => s + a.amount, 0);
 }
 
 export function getPendingReminders(): Reminder[] {

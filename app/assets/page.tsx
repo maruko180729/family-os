@@ -86,8 +86,9 @@ export default function AssetsPage() {
           本月变化 {changePrefix}¥{Math.abs(monthlyChange).toLocaleString()}
         </p>
 
-        {/* 12-month trend */}
-        {trendValues.length >= 2 && (
+        {/* 12-month trend — only show once the current month itself has a snapshot,
+            otherwise the rising historical line reads as contradicting the ¥0 shown above */}
+        {hasData && trendValues.length >= 2 && (
           <div className="mt-4">
             <LineChart data={trendValues} labels={trendLabels} color="white" height={72} />
           </div>

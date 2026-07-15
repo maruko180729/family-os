@@ -33,6 +33,22 @@ function sumGroup(snaps: AssetSnapshot[], group: AssetGroup): number {
   return snaps.find(s => s.group === group)?.amount ?? 0;
 }
 
+// Net asset as of the most recently recorded snapshot month (for pages
+// that show "current status" without a month selector, e.g. Home/Growth).
+export function getLatestNetAsset(): { netAsset: number; change: number; month: string | null } {
+  const snapshots = getAssetSnapshots();
+  const months = [...new Set(snapshots.map(s => s.month))].sort();
+  if (months.length === 0) return { netAsset: 0, change: 0, month: null };
+
+  const sumMonth = (m: string) => snapshots.filter(s => s.month === m).reduce((s, snap) => s + snap.amount, 0);
+  const latest = months[months.length - 1];
+  const netAsset = sumMonth(latest);
+  const prevMonthKey = months.length > 1 ? months[months.length - 2] : null;
+  const change = prevMonthKey ? netAsset - sumMonth(prevMonthKey) : 0;
+
+  return { netAsset, change, month: latest };
+}
+
 export function useAssets(month: string) {
   const [snapshots, setSnapshots] = useState<AssetSnapshot[]>(() => getAssetSnapshots());
 

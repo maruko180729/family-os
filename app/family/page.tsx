@@ -1,18 +1,32 @@
 "use client";
 
+import { useState } from "react";
 import { Heart } from "lucide-react";
 import { HeroCard } from "@/components/ui/HeroCard";
 import { MemberCard } from "@/components/ui/MemberCard";
-import { SectionCard } from "@/components/ui/SectionCard";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { mockMembers, mockSettings } from "@/lib/mock";
-
-const anniversaries = [
-  { label: "结婚纪念日", date: "每年 5 月 20 日" },
-  { label: "Maruko 生日", date: "每年 3 月 7 日" },
-];
+import { MarukoCard } from "@/components/ui/MarukoCard";
+import { CompanyCard } from "@/components/ui/CompanyCard";
+import { VehicleCard } from "@/components/ui/VehicleCard";
+import { DocumentCard } from "@/components/ui/DocumentCard";
+import { FamilyTimeline } from "@/components/ui/FamilyTimeline";
+import AddMilestoneSheet from "@/components/AddMilestoneSheet";
+import { useMilestones } from "@/hooks/useMilestones";
+import { getMembers, getCompanies, getVehicles, getDocuments, getReminders } from "@/lib/storage";
+import { mockSettings } from "@/lib/mock";
 
 export default function FamilyPage() {
+  const members = getMembers();
+  const maruko = members.find(m => m.id === "m3");
+  const familyMembers = members.filter(m => m.id !== "m3");
+
+  const companies = getCompanies();
+  const vehicles = getVehicles();
+  const documents = getDocuments();
+  const reminders = getReminders();
+  const { milestones, addMilestone } = useMilestones();
+
+  const [sheetOpen, setSheetOpen] = useState(false);
+
   return (
     <div className="pt-12 space-y-4">
       <div className="pb-1">
@@ -28,20 +42,23 @@ export default function FamilyPage() {
         <p className="text-lg font-medium leading-relaxed">一起把生活经营得越来越好。</p>
       </HeroCard>
 
-      <MemberCard members={mockMembers} />
+      <MemberCard members={familyMembers} />
 
-      <SectionCard label="家庭纪念日">
-        <div className="space-y-3">
-          {anniversaries.map(a => (
-            <div key={a.label} className="flex items-center justify-between">
-              <span className="text-sm text-foreground">{a.label}</span>
-              <span className="text-sm text-muted-foreground">{a.date}</span>
-            </div>
-          ))}
-        </div>
-      </SectionCard>
+      {maruko && <MarukoCard member={maruko} reminders={reminders} />}
 
-      <EmptyState emoji="📷" title="家庭照片" description="即将开放" />
+      <CompanyCard companies={companies} />
+
+      <VehicleCard vehicles={vehicles} />
+
+      <DocumentCard documents={documents} members={members} />
+
+      <FamilyTimeline milestones={milestones} onAddClick={() => setSheetOpen(true)} />
+
+      <AddMilestoneSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        onSave={addMilestone}
+      />
     </div>
   );
 }

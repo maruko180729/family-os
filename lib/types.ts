@@ -83,6 +83,7 @@ export interface Reminder {
   category: "tax" | "insurance" | "medical" | "visa" | "other";
   status: ReminderStatus;
   relatedGoalId?: string;
+  relatedMemberId?: string; // Member id, e.g. links a medical reminder to Maruko
   note?: string;
 }
 
@@ -123,4 +124,34 @@ export interface AppSettings {
   familyName: string;
   primaryCurrency: string;
   timezone: string;
+}
+
+// Sprint 3 — Home/家 module
+export interface Company {
+  id: string;
+  name: string;
+  legalRepresentative: string; // member name
+  foundedYear: string; // "YYYY"
+  status: string; // e.g. "正常经营"
+}
+
+export interface Vehicle {
+  id: string;
+  name: string;
+  nextInspection: string; // "YYYY-MM-DD"
+  insuranceExpiry: string; // "YYYY-MM-DD"
+}
+
+export interface FamilyDocument {
+  id: string;
+  ownerId: string; // Member id
+  label: string; // e.g. "永住申请计划"
+  date: string; // "YYYY" or "YYYY-MM-DD"
+}
+
+export interface Milestone {
+  id: string;
+  date: string; // "YYYY" or "YYYY-MM"
+  title: string;
+  emoji?: string;
 }

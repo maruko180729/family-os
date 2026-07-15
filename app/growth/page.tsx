@@ -2,8 +2,14 @@
 
 import { GoalCard } from "@/components/ui/GoalCard";
 import { mockGoals } from "@/lib/mock";
+import { getLatestNetAsset } from "@/hooks/useAssets";
 
 export default function GrowthPage() {
+  const { netAsset } = getLatestNetAsset();
+  const goals = mockGoals.map(g =>
+    g.category === "asset" ? { ...g, currentValue: netAsset } : g
+  );
+
   return (
     <div className="pt-12 space-y-4">
       <div className="pb-1">
@@ -12,7 +18,7 @@ export default function GrowthPage() {
       </div>
 
       <div className="space-y-3">
-        {mockGoals.map(goal => (
+        {goals.map(goal => (
           <GoalCard key={goal.id} goal={goal} />
         ))}
       </div>
