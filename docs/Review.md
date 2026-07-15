@@ -71,7 +71,50 @@
 - 家庭时间线的里程碑内容（结婚/洗牙/NISA/永住/创业）是否需要调整或补充
 
 ### 下一步计划
-**Sprint 4 — 月度回顾**
-- 月度回顾填写页（`/more/review`）
-- 字段：本月净资产变化 / 大事件 / 收入概况 / 一次性支出 / 下月重点 / 最开心的事
-- AI 月报总结（静态文案版）
+**Stabilization Sprint**
+- Git 收口、文档同步、技术债清理、首页真实数据联动
+
+---
+
+## Sprint 2 — 家庭资产
+*2026-07-04*
+
+**Preview:** https://family-1ew79ytki-maruko0729.vercel.app
+
+### 本次完成
+- `/assets` 月度资产快照模块（日本/中国/投资/其它 四分类）
+- `AssetSnapshot` 类型 + `useAssets` hook + `UpdateAssetsSheet`
+- SVG 趋势折线（12 个月，无第三方库）
+- Hero：净资产 + 本月变化 + 最后更新时间
+- 未录入分类显示「—」
+- 导航：成长→未来，更多→家
+
+### 产品确认
+- ✅ 同月覆盖保存
+- ✅ 未录入显示「—」
+- ✅ 颜色固定（蓝/绿/橙/灰）
+- ✅ Hero 增加最后更新时间
+
+### 下一步计划
+Sprint 3 家 Home Module（/family 全新设计）
+
+---
+
+## Stabilization Sprint
+*2026-07-16*
+
+### 本次完成
+- Phase 1：Sprint 3+4 代码补提交（commit e6203ff）
+- Phase 2：/review 功能确认（页面正常、/more 入口正常、无控制台错误）
+- Phase 3：文档全面同步（ProductDNA / Roadmap / ChangeLog / Review / Database / ProjectStatus）
+- Phase 4：废弃代码清理（5 个无引用组件、3 个废弃类型、旧资产函数）
+- Phase 5：提取 `MonthSelector` 统一组件
+- Phase 6：首页改用真实数据（提醒读 storage，AI 顾问规则动态生成）
+- Phase 7：Lint + Build 通过
+
+### 月度回顾需要 Product Review 的确认项
+1. `/review` 页面：初始进入是否应默认上月（当前实现：是）
+2. Hero 无资产数据时的提示文案是否合适
+3. AI 月报总结自动生成逻辑是否足够
+4. `/more` 入口显示方式（当前：列表按钮）是否满意
+5. 是否需要支持修改已保存的回顾（当前：覆盖保存）

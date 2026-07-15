@@ -31,14 +31,16 @@
 ## 导航结构
 
 ```
-今天 / 资产 / 成长 / 家 / 更多
+今天 / 经营 / 资产 / 未来 / 家
 ```
 
-- **今天** — 30秒内了解家庭状态
-- **资产** — 净资产结构，不看流水
-- **成长** — 未来目标进度
-- **家** — 家庭档案与温度
-- **更多** — 节税中心、月度回顾、设置
+- **今天** (`/`) — 30秒内了解家庭状态，家庭净资产一键查看
+- **经营** (`/management`) — 月度收支录入，不做每日流水
+- **资产** (`/assets`) — 家庭净资产月度快照，趋势折线
+- **未来** (`/growth`) — 家庭目标进度
+- **家** (`/family`) — 家庭档案：成员 / Maruko / 公司 / 车辆 / 证件 / 时间线
+
+月度回顾 (`/review`) 通过「更多」页面入口访问，不占底部导航。
 
 ---
 
@@ -59,14 +61,21 @@
 
 所有页面必须使用统一组件，禁止在页面内写内联样式卡片。
 
-| 组件 | 用途 |
-|---|---|
-| `HeroCard` | 主指标卡（深绿背景） |
-| `Card` | 通用白色卡片 |
-| `SectionLabel` | 卡片内区块标题 |
-| `AdvisorCard` | AI 家庭顾问 |
-| `GoalCard` | 成长目标卡 |
-| `ReminderItem` | 提醒事项 |
+| 组件 | 路径 | 用途 |
+|---|---|---|
+| `HeroCard` | `components/ui/HeroCard` | 主指标卡（深绿背景） |
+| `SectionCard` | `components/ui/SectionCard` | 通用白色区块卡片，支持可选 label |
+| `GoalCard` | `components/ui/GoalCard` | 成长目标进度卡 |
+| `ReminderCard` | `components/ui/ReminderCard` | 待办提醒列表 |
+| `InputCard` | `components/ui/InputCard` | 多字段表单卡片（月度回顾） |
+| `MemberCard` | `components/ui/MemberCard` | 家庭成员展示 |
+| `MarukoCard` | `components/ui/MarukoCard` | Maruko 专属卡片（年龄+关联提醒） |
+| `CompanyCard` | `components/ui/CompanyCard` | 公司信息卡 |
+| `VehicleCard` | `components/ui/VehicleCard` | 车辆+到期提醒色阶卡 |
+| `DocumentCard` | `components/ui/DocumentCard` | 家庭重要证件卡 |
+| `FamilyTimeline` | `components/ui/FamilyTimeline` | 家庭时间线（支持手动录入） |
+| `LineChart` | `components/LineChart` | 纯 SVG 折线图（无第三方库） |
+| `MonthSelector` | `components/MonthSelector` | 统一月份切换组件 |
 
 ---
 
