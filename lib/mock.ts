@@ -4,6 +4,7 @@
 import type {
   Member, Income, Expense, Goal, Reminder, Timeline, AppSettings,
   AssetSnapshot, Company, Vehicle, FamilyDocument, Milestone,
+  CreditCard, RecurringExpense,
 } from "./types";
 
 export const mockSettings: AppSettings = {
@@ -188,6 +189,25 @@ export const mockMilestones: Milestone[] = [
   { id: "ms3", date: "2026", title: "开始 NISA 定投",  emoji: "💹" },
   { id: "ms4", date: "2027", title: "计划申请永住",    emoji: "🏠" },
   { id: "ms5", date: "未来", title: "创业",            emoji: "🚀" },
+];
+
+// Beta 0.2 — Credit Cards
+export const mockCreditCards: CreditCard[] = [
+  { id: "cc1", name: "AMEX Gold",    last4: "1234", billingDay: 1,  paymentDay: 26, isDefault: true  },
+  { id: "cc2", name: "三井住友 NL",  last4: "5678", billingDay: 15, paymentDay: 10, isDefault: false },
+  { id: "cc3", name: "楽天カード",   last4: "8888", billingDay: 27, paymentDay: 27, isDefault: false },
+];
+
+// Beta 0.2 — Recurring Expense Templates
+export const mockRecurringExpenses: RecurringExpense[] = [
+  { id: "re1", name: "房租",      amount: 120000, paymentDay: 1,  category: "房屋",    enabled: true },
+  { id: "re2", name: "东京电力",  amount: 8000,   paymentDay: 28, category: "水电燃气", enabled: true },
+  { id: "re3", name: "东京煤气",  amount: 4000,   paymentDay: 28, category: "水电燃气", enabled: true },
+  { id: "re4", name: "网络",      amount: 5000,   paymentDay: 5,  category: "通讯",    enabled: true },
+  { id: "re5", name: "手机",      amount: 3000,   paymentDay: 5,  category: "通讯",    enabled: true },
+  { id: "re6", name: "Netflix",   amount: 1980,   paymentDay: 12, category: "娱乐",    enabled: true },
+  { id: "re7", name: "ChatGPT",   amount: 3000,   paymentDay: 8,  category: "AI订阅",  enabled: true },
+  { id: "re8", name: "Claude",    amount: 3000,   paymentDay: 8,  category: "AI订阅",  enabled: true },
 ];
 
 export function getPendingReminders(): Reminder[] {

@@ -22,6 +22,7 @@ export interface Income {
 }
 
 export type ExpenseCategory = "fixed" | "credit" | "other";
+export type ExpenseType = "recurring" | "credit" | "other";
 
 export interface Expense {
   id: string;
@@ -29,6 +30,34 @@ export interface Expense {
   category: ExpenseCategory;
   amount: number;
   date: string;        // "YYYY-MM-DD"
+  note?: string;
+  // Beta 0.2 — payment management
+  expenseType?: ExpenseType;
+  paymentSourceId?: string; // CreditCard.id
+  recurringId?: string;     // RecurringExpense.id
+}
+
+// Beta 0.2 — Credit Cards
+export interface CreditCard {
+  id: string;
+  name: string;
+  last4: string;
+  billingDay?: number;  // day of month the bill is issued
+  paymentDay?: number;  // day of month the payment is debited
+  color?: string;
+  isDefault: boolean;
+}
+
+// Beta 0.2 — Recurring Expense Templates
+export type RecurringCategory = "房屋" | "水电燃气" | "通讯" | "AI订阅" | "娱乐" | "保险" | "税金" | "其他";
+
+export interface RecurringExpense {
+  id: string;
+  name: string;
+  amount: number;       // default amount (JPY)
+  paymentDay?: number;  // default day of month
+  category: RecurringCategory;
+  enabled: boolean;
   note?: string;
 }
 

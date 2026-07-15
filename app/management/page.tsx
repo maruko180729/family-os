@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Settings2 } from "lucide-react";
 import { MonthSelector } from "@/components/MonthSelector";
 import { HeroCard } from "@/components/ui/HeroCard";
 import { SectionCard } from "@/components/ui/SectionCard";
@@ -9,8 +9,9 @@ import { useMonth } from "@/hooks/useMonth";
 import { useManagement } from "@/hooks/useManagement";
 import AddIncomeSheet from "@/components/AddIncomeSheet";
 import AddExpenseSheet from "@/components/AddExpenseSheet";
+import PaymentCenterSheet from "@/components/PaymentCenterSheet";
 import { toast } from "@/hooks/useToast";
-import type { IncomeSource, ExpenseCategory } from "@/lib/types";
+import type { IncomeSource } from "@/lib/types";
 
 const INCOME_LABELS: Record<IncomeSource, string> = {
   salary: "工资",
@@ -18,10 +19,12 @@ const INCOME_LABELS: Record<IncomeSource, string> = {
   other:  "其他收入",
 };
 
-const EXPENSE_LABELS: Record<ExpenseCategory, string> = {
-  fixed:  "固定支出",
-  credit: "信用卡合计",
-  other:  "其他支出",
+const EXPENSE_TYPE_LABELS: Record<string, string> = {
+  recurring: "固定支出",
+  credit:    "信用卡",
+  other:     "其他支出",
+  // legacy
+  fixed:     "固定支出",
 };
 
 export default function ManagementPage() {
@@ -34,6 +37,7 @@ export default function ManagementPage() {
 
   const [incomeOpen, setIncomeOpen] = useState(false);
   const [expenseOpen, setExpenseOpen] = useState(false);
+  const [paymentCenterOpen, setPaymentCenterOpen] = useState(false);
 
   // AI advisor — rule-based text
   const advisorText = (() => {
@@ -135,7 +139,7 @@ export default function ManagementPage() {
               <div key={item.id} className="flex items-center justify-between group">
                 <div className="flex items-center gap-2.5">
                   <span className="text-xs px-2.5 py-1 rounded-full bg-red-50 text-red-600 font-medium">
-                    {EXPENSE_LABELS[item.category]}
+                    {EXPENSE_TYPE_LABELS[item.expenseType ?? item.category]}
                   </span>
                   {item.note && <span className="text-xs text-muted-foreground">{item.note}</span>}
                 </div>
@@ -161,6 +165,21 @@ export default function ManagementPage() {
         <p className="text-sm text-foreground leading-[1.8]">{advisorText}</p>
       </SectionCard>
 
+      {/* Payment Center entry */}
+      <button
+        onClick={() => setPaymentCenterOpen(true)}
+        className="w-full flex items-center justify-between px-5 py-4 bg-card border border-border rounded-3xl shadow-sm active:scale-[0.98] transition-transform"
+      >
+        <div className="flex items-center gap-3">
+          <Settings2 size={16} className="text-muted-foreground" />
+          <div className="text-left">
+            <p className="text-sm font-semibold text-foreground">支付管理</p>
+            <p className="text-xs text-muted-foreground">信用卡 · 固定支出模板</p>
+          </div>
+        </div>
+        <span className="text-xs text-muted-foreground">管理 →</span>
+      </button>
+
       {/* Sheets */}
       <AddIncomeSheet
         open={incomeOpen}
@@ -178,13 +197,19 @@ export default function ManagementPage() {
         open={expenseOpen}
         currentMonth={month}
         onClose={() => setExpenseOpen(false)}
-        onSave={(category, amount, date, note) => {
-          const saved = addExpense(category, amount, date, note);
+        onSave={payload => {
+          const saved = addExpense(payload);
           if (saved !== month) {
             const [y, m] = saved.split("-");
             toast(`已保存到 ${y}年${parseInt(m)}月`);
           }
+          return saved;
         }}
+      />
+
+      <PaymentCenterSheet
+        open={paymentCenterOpen}
+        onClose={() => setPaymentCenterOpen(false)}
       />
     </div>
   );

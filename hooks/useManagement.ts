@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import type { Income, Expense, IncomeSource, ExpenseCategory } from "@/lib/types";
+import type { Income, Expense, IncomeSource, ExpenseCategory, ExpenseType } from "@/lib/types";
 import { getIncome, saveIncome, getExpenses, saveExpenses } from "@/lib/storage";
 
 function genId() {
@@ -30,9 +30,27 @@ export function useManagement(month: string) {
   );
 
   const addExpense = useCallback(
-    (category: ExpenseCategory, amount: number, date: string, note?: string): string => {
-      const recordMonth = date.slice(0, 7);
-      const entry: Expense = { id: genId(), month: recordMonth, category, amount, date, note };
+    (opts: {
+      category: ExpenseCategory;
+      expenseType?: ExpenseType;
+      amount: number;
+      date: string;
+      note?: string;
+      paymentSourceId?: string;
+      recurringId?: string;
+    }): string => {
+      const recordMonth = opts.date.slice(0, 7);
+      const entry: Expense = {
+        id: genId(),
+        month: recordMonth,
+        category: opts.category,
+        amount: opts.amount,
+        date: opts.date,
+        note: opts.note,
+        expenseType: opts.expenseType,
+        paymentSourceId: opts.paymentSourceId,
+        recurringId: opts.recurringId,
+      };
       const updated = [...getExpenses(), entry];
       saveExpenses(updated);
       setAllExpenses(updated);

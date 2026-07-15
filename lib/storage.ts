@@ -3,12 +3,13 @@
 
 import type {
   Member, Goal, Reminder, Timeline, Income, Expense, AssetSnapshot,
-  Company, Vehicle, FamilyDocument, Milestone,
+  Company, Vehicle, FamilyDocument, Milestone, CreditCard, RecurringExpense,
 } from "./types";
 import {
   mockMembers, mockGoals, mockReminders, mockTimeline,
   mockIncome, mockExpenses, mockAssetSnapshots,
   mockCompanies, mockVehicles, mockDocuments, mockMilestones,
+  mockCreditCards, mockRecurringExpenses,
 } from "./mock";
 
 const PREFIX = "family-os";
@@ -75,3 +76,11 @@ export const saveDocuments = (v: FamilyDocument[]) => save("documents", v);
 // Family milestones (Sprint 3)
 export const getMilestones = (): Milestone[] => load("milestones", mockMilestones);
 export const saveMilestones = (v: Milestone[]) => save("milestones", v);
+
+// Credit Cards (Beta 0.2)
+export const getCreditCards = (): CreditCard[] => load("creditCards", mockCreditCards);
+export const saveCreditCards = (v: CreditCard[]) => save("creditCards", v);
+
+// Recurring Expense Templates (Beta 0.2)
+export const getRecurringExpenses = (): RecurringExpense[] => load("recurringExpenses", mockRecurringExpenses);
+export const saveRecurringExpenses = (v: RecurringExpense[]) => save("recurringExpenses", v);
