@@ -53,16 +53,49 @@ note        text
 created_at  timestamptz default now()
 ```
 
-### `expense` — 支出记录（月度，非每日流水）
+### `credit_card` — 信用卡（Beta 0.2+）
 
 ```sql
 id          uuid primary key default gen_random_uuid()
-month       text not null     -- "YYYY-MM"
-category    text not null     -- "fixed" | "credit" | "other"
-amount      bigint not null   -- 日元
-date        text not null     -- "YYYY-MM-DD"
+name        text not null     -- 卡片名称（必填）
+last4       text not null     -- 后四位数字（恰好4位）
+billing_day int               -- 账单日 1–31（可选）
+payment_day int               -- 还款日 1–31（可选，用于默认支付日期）
+color       text              -- UI 标识色（可选）
+is_default  boolean default false
+created_at  timestamptz default now()
+```
+
+**LocalStorage key:** `family-os:creditCards → CreditCard[]`
+
+### `recurring_expense` — 固定支出模板（Beta 0.2+）
+
+```sql
+id          uuid primary key default gen_random_uuid()
+name        text not null     -- 模板名称（必填）
+amount      bigint not null   -- 日元；0 表示金额变动（每次录入时输入）
+payment_day int               -- 每月支付日 1–31（可选）
+category    text not null     -- RecurringCategory（如 "housing" | "utility" 等）
+enabled     boolean default true
 note        text
 created_at  timestamptz default now()
+```
+
+**LocalStorage key:** `family-os:recurringExpenses → RecurringExpense[]`
+
+### `expense` — 支出记录（月度，非每日流水）
+
+```sql
+id                uuid primary key default gen_random_uuid()
+month             text not null     -- "YYYY-MM"（由 date 字段派生，非页面月份）
+category          text not null     -- "fixed" | "credit" | "other"
+expense_type      text              -- "recurring" | "credit" | "other"（Beta 0.2+）
+amount            bigint not null   -- 日元
+date              text not null     -- "YYYY-MM-DD"（月归属以此字段为准）
+note              text
+payment_source_id uuid              -- 关联 credit_card.id（credit 类型时使用）
+recurring_id      uuid              -- 关联 recurring_expense.id（recurring 类型时使用）
+created_at        timestamptz default now()
 ```
 
 ### `goal` — 家庭目标
@@ -174,6 +207,8 @@ family-os:vehicles         → Vehicle[]          (车辆信息，Sprint 3+)
 family-os:documents        → FamilyDocument[]   (重要证件，Sprint 3+)
 family-os:milestones       → Milestone[]        (家庭时间线，Sprint 3+)
 family-os:monthlyReviews   → Timeline[]         (月度回顾，Sprint 4+，即 timeline 键)
+family-os:creditCards      → CreditCard[]       (信用卡列表，Beta 0.2+)
+family-os:recurringExpenses → RecurringExpense[] (固定支出模板，Beta 0.2+)
 family-os:settings         → Settings
 ```
 

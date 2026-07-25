@@ -30,7 +30,11 @@ function CardForm({
   const [paymentDay, setPayment]  = useState(initial?.paymentDay ? String(initial.paymentDay) : "");
   const [isDefault, setDefault]   = useState(initial?.isDefault ?? false);
 
-  const canSave = name.trim().length > 0 && last4.trim().length === 4;
+  const payDay = Number(paymentDay);
+  const billDay = Number(billingDay);
+  const payDayValid = !paymentDay || (payDay >= 1 && payDay <= 31);
+  const billDayValid = !billingDay || (billDay >= 1 && billDay <= 31);
+  const canSave = name.trim().length > 0 && /^\d{4}$/.test(last4) && payDayValid && billDayValid;
 
   return (
     <div className="space-y-3 py-3">
@@ -97,7 +101,7 @@ function CardForm({
           取消
         </button>
         <button
-          onClick={() => onSave({ name: name.trim(), last4, billingDay: Number(billingDay) || undefined, paymentDay: Number(paymentDay) || undefined, isDefault })}
+          onClick={() => onSave({ name: name.trim(), last4, billingDay: billDay >= 1 && billDay <= 31 ? billDay : undefined, paymentDay: payDay >= 1 && payDay <= 31 ? payDay : undefined, isDefault })}
           disabled={!canSave}
           className="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold disabled:opacity-40"
         >
@@ -119,13 +123,19 @@ function RecurringForm({
   onCancel: () => void;
 }) {
   const [name, setName]             = useState(initial?.name ?? "");
-  const [amount, setAmount]         = useState(initial?.amount ? String(initial.amount) : "");
+  // amount: empty string means "variable each month" (saved as 0)
+  const [amount, setAmount]         = useState(initial !== undefined ? String(initial.amount) : "");
   const [paymentDay, setPayDay]     = useState(initial?.paymentDay ? String(initial.paymentDay) : "");
   const [category, setCategory]     = useState<RecurringCategory>(initial?.category ?? "其他");
   const [enabled, setEnabled]       = useState(initial?.enabled ?? true);
   const [note, setNote]             = useState(initial?.note ?? "");
 
-  const canSave = name.trim().length > 0 && Number(amount) > 0;
+  const payDay = Number(paymentDay);
+  const payDayValid = !paymentDay || (payDay >= 1 && payDay <= 31);
+  // amount="" is allowed (means variable); only block non-numeric garbage
+  const amountNum = amount === "" ? 0 : Number(amount);
+  const amountValid = amount === "" || (!isNaN(amountNum) && amountNum >= 0);
+  const canSave = name.trim().length > 0 && amountValid && payDayValid;
 
   return (
     <div className="space-y-3 py-3">
@@ -209,7 +219,7 @@ function RecurringForm({
           取消
         </button>
         <button
-          onClick={() => onSave({ name: name.trim(), amount: Number(amount), paymentDay: Number(paymentDay) || undefined, category, enabled, note: note.trim() || undefined })}
+          onClick={() => onSave({ name: name.trim(), amount: amountNum, paymentDay: payDay >= 1 && payDay <= 31 ? payDay : undefined, category, enabled, note: note.trim() || undefined })}
           disabled={!canSave}
           className="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold disabled:opacity-40"
         >

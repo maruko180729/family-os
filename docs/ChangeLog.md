@@ -11,6 +11,37 @@
 - `/family` 各卡片编辑功能
 - 资产快照单分类修改
 - 节税中心详情页
+- Beta 0.3：固定支出自动账单、Supabase 迁移
+
+---
+
+## [Beta 0.2 Review Fix] — 2026-07-25
+
+### Fixed
+- 信用卡支付日默认：选卡后自动填入 `${currentMonth}-${card.paymentDay}`，跨月末截断（`monthDay()` helper）
+- 固定支出支付日默认：选模板后同样使用 `monthDay(currentMonth, template.paymentDay)` 推算
+- 2月31日等场景：`new Date(y, m, 0).getDate()` 正确截断至月末最后一天
+- 经営页支出明细来源显示：
+  - 信用卡 → `{card.name} •••• {card.last4}`
+  - 固定支出 → 模板名称（via `recurringId`）
+  - 其他 → `note ?? "其他支出"`
+  - 旧数据兼容：`expenseType ?? category` 回落链，无错误
+- 信用卡字段校验：`name` 必填，`last4` 恰好4位数字，`paymentDay` / `billingDay` 1–31
+- 固定支出模板：`amount=0` 表示金额变动，录入时留空 + 自动聚焦；`amount>0` 预填但可编辑
+- 固定支出模板列表：金额为0时显示"金额变动"而非¥0
+
+---
+
+## [Beta 0.2] — 2026-07-25
+
+### Added
+- `CreditCard` 类型：`id / name / last4 / billingDay? / paymentDay? / color? / isDefault`
+- `RecurringExpense` 类型：`id / name / amount / paymentDay? / category / enabled / note?`
+- `PaymentCenterSheet`：信用卡管理 + 固定支出模板管理（增删改）
+- `AddExpenseSheet` 三模式：固定支出（选模板）/ 信用卡（选卡）/ 其他
+- `Expense` 新增字段：`expenseType` / `paymentSourceId` / `recurringId`
+- 经営页「支付管理」入口按钮
+- LocalStorage 新键：`family-os:creditCards` / `family-os:recurringExpenses`
 
 ---
 

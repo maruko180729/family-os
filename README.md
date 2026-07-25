@@ -16,18 +16,18 @@ Family OS is not accounting software. It's a system for running your household l
 
 | Page | Route | Description |
 |------|-------|-------------|
-| 今天 | `/` | Daily overview, reminders, member status |
-| 経営 | `/management` | Monthly income & expense recording |
-| 资产 | `/assets` | Net asset tracking, allocation chart |
-| 成长 | `/growth` | Goals and growth milestones |
-| 更多 | `/more` | Tax optimization, settings |
+| 今天 | `/` | Daily overview, net assets, reminders |
+| 経営 | `/management` | Monthly income & expense · Payment Management |
+| 资产 | `/assets` | Net asset tracking, per-group editing |
+| 未来 | `/growth` | Goals and growth milestones |
+| 家 | `/family` | Family profile, vehicles, documents, reminders |
 
 ## Tech Stack
 
 - **Framework**: Next.js 16 App Router
 - **UI**: shadcn/ui + Tailwind CSS v4
 - **Language**: TypeScript (strict)
-- **Storage**: LocalStorage (→ Supabase in Alpha 0.7)
+- **Storage**: LocalStorage (→ Supabase in Beta)
 - **Deploy**: Vercel
 
 ## Development
@@ -41,12 +41,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Status
 
-**Alpha 0.5 — Sprint 1 complete**
+**Beta 0.2 — Payment Management**
 
-- ✅ Sprint 0: Foundation (types, storage, 10 UI components, docs)
-- ✅ Sprint 1: 経営 page — income/expense recording with LocalStorage
-- 🔜 Sprint 2: Monthly review
-- 🔜 Sprint 3: Assets deep edit
+- ✅ Sprint 0–6: Foundation, 経営, Assets, Growth, Review, Family module, editing
+- ✅ Hotfix: Income/expense date attribution by `date` field, not page month
+- ✅ Beta 0.2: CreditCard + RecurringExpense data models, Payment Center UI
+- ✅ Beta 0.2 Review Fix: Payment date defaults, expense source display
+- 🔜 Beta 0.3: Auto recurring billing, Supabase migration
 
 ## Docs
 

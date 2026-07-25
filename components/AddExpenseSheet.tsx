@@ -4,8 +4,7 @@ import { useState } from "react";
 import { ChevronLeft, CheckCircle2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { ExpenseCategory, ExpenseType, CreditCard, RecurringExpense } from "@/lib/types";
-import { getCreditCards } from "@/lib/storage";
-import { getRecurringExpenses } from "@/lib/storage";
+import { getCreditCards, getRecurringExpenses } from "@/lib/storage";
 
 const CATEGORY_LABELS: Record<string, string> = {
   fixed:  "固定支出",
@@ -32,24 +31,33 @@ interface Props {
 
 type Mode = "fixed" | "credit" | "other";
 
+// Compute YYYY-MM-DD from a month string and a day number, clamped to last day of that month.
+function monthDay(currentMonth: string, day: number): string {
+  const [y, m] = currentMonth.split("-").map(Number);
+  const lastDay = new Date(y, m, 0).getDate(); // new Date(y, m, 0) = last day of month m
+  const clamped = Math.min(day, lastDay);
+  return `${currentMonth}-${String(clamped).padStart(2, "0")}`;
+}
+
 // ── Fixed expense flow ─────────────────────────────────────────────────────
-function FixedFlow({ currentMonth, onClose, onSave }: { currentMonth: string; onClose: () => void; onSave: (p: SavePayload) => void }) {
+function FixedFlow({
+  currentMonth, onClose, onSave,
+}: { currentMonth: string; onClose: () => void; onSave: (p: SavePayload) => void }) {
   const items = getRecurringExpenses().filter(r => r.enabled);
   const [selected, setSelected] = useState<RecurringExpense | null>(null);
+  // amount: empty string when template amount === 0 (variable), pre-filled otherwise
   const [amount, setAmount] = useState("");
+  const [date, setDate] = useState("");
 
   function handleSelect(item: RecurringExpense) {
     setSelected(item);
-    setAmount(String(item.amount));
+    setAmount(item.amount > 0 ? String(item.amount) : "");
+    setDate(item.paymentDay ? monthDay(currentMonth, item.paymentDay) : `${currentMonth}-01`);
   }
 
   function handleSave() {
     const num = parseInt(amount.replace(/,/g, ""), 10);
-    if (!selected || !num || num <= 0) return;
-    const day = selected.paymentDay
-      ? String(selected.paymentDay).padStart(2, "0")
-      : "01";
-    const date = `${currentMonth}-${day}`;
+    if (!selected || !num || num <= 0 || !date) return;
     onSave({
       category: "fixed",
       expenseType: "recurring",
@@ -72,7 +80,9 @@ function FixedFlow({ currentMonth, onClose, onSave }: { currentMonth: string; on
               <p className="text-sm font-medium text-foreground">{item.name}</p>
               <p className="text-xs text-muted-foreground mt-0.5">{item.category}</p>
             </div>
-            <p className="text-sm font-semibold text-foreground">¥{item.amount.toLocaleString()}</p>
+            <p className="text-sm font-semibold text-foreground">
+              {item.amount > 0 ? `¥${item.amount.toLocaleString()}` : "金额变动"}
+            </p>
           </button>
         ))}
         {items.length === 0 && (
@@ -103,6 +113,7 @@ function FixedFlow({ currentMonth, onClose, onSave }: { currentMonth: string; on
           <input
             type="number"
             inputMode="numeric"
+            placeholder="0"
             value={amount}
             onChange={e => setAmount(e.target.value)}
             autoFocus
@@ -111,9 +122,19 @@ function FixedFlow({ currentMonth, onClose, onSave }: { currentMonth: string; on
         </div>
       </div>
 
+      <div>
+        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">日期</label>
+        <input
+          type="date"
+          value={date}
+          onChange={e => setDate(e.target.value)}
+          className="w-full px-3.5 py-3 bg-muted rounded-2xl text-sm text-foreground outline-none focus:ring-1 focus:ring-primary transition-shadow"
+        />
+      </div>
+
       <button
         onClick={handleSave}
-        disabled={!amount || parseInt(amount) <= 0}
+        disabled={!amount || parseInt(amount) <= 0 || !date}
         className="w-full py-3.5 rounded-2xl bg-destructive text-white font-semibold text-sm disabled:opacity-40 active:scale-95 transition-transform"
       >
         保存
@@ -124,16 +145,22 @@ function FixedFlow({ currentMonth, onClose, onSave }: { currentMonth: string; on
 }
 
 // ── Credit card flow ───────────────────────────────────────────────────────
-function CreditFlow({ onClose, onSave }: { onClose: () => void; onSave: (p: SavePayload) => void }) {
+function CreditFlow({
+  currentMonth, onClose, onSave,
+}: { currentMonth: string; onClose: () => void; onSave: (p: SavePayload) => void }) {
   const cards = getCreditCards();
   const [selected, setSelected] = useState<CreditCard | null>(null);
   const [amount, setAmount] = useState("");
-  const today = new Date().toISOString().slice(0, 10);
-  const [date, setDate] = useState(today);
+  const [date, setDate] = useState("");
+
+  function handleSelect(card: CreditCard) {
+    setSelected(card);
+    setDate(card.paymentDay ? monthDay(currentMonth, card.paymentDay) : new Date().toISOString().slice(0, 10));
+  }
 
   function handleSave() {
     const num = parseInt(amount.replace(/,/g, ""), 10);
-    if (!selected || !num || num <= 0) return;
+    if (!selected || !num || num <= 0 || !date) return;
     onSave({
       category: "credit",
       expenseType: "credit",
@@ -149,7 +176,7 @@ function CreditFlow({ onClose, onSave }: { onClose: () => void; onSave: (p: Save
         {cards.map(card => (
           <button
             key={card.id}
-            onClick={() => setSelected(card)}
+            onClick={() => handleSelect(card)}
             className="w-full flex items-center justify-between px-4 py-3.5 bg-muted rounded-2xl active:scale-[0.98] transition-transform text-left"
           >
             <p className="text-sm font-medium text-foreground">{card.name}</p>
@@ -205,7 +232,7 @@ function CreditFlow({ onClose, onSave }: { onClose: () => void; onSave: (p: Save
 
       <button
         onClick={handleSave}
-        disabled={!amount || parseInt(amount) <= 0}
+        disabled={!amount || parseInt(amount) <= 0 || !date}
         className="w-full py-3.5 rounded-2xl bg-destructive text-white font-semibold text-sm disabled:opacity-40 active:scale-95 transition-transform"
       >
         保存
@@ -284,10 +311,7 @@ export default function AddExpenseSheet({ open, currentMonth, onClose, onSave }:
   const [mode, setMode] = useState<Mode>("fixed");
 
   function handleSave(payload: SavePayload) {
-    const saved = onSave(payload);
-    if (saved !== currentMonth) {
-      // parent handles toast
-    }
+    onSave(payload);
     setMode("fixed");
     onClose();
   }
@@ -323,7 +347,7 @@ export default function AddExpenseSheet({ open, currentMonth, onClose, onSave }:
         <p className="text-xs text-muted-foreground mb-3">{modeTitle[mode]}</p>
 
         {mode === "fixed"  && <FixedFlow  currentMonth={currentMonth} onClose={onClose} onSave={handleSave} />}
-        {mode === "credit" && <CreditFlow onClose={onClose} onSave={handleSave} />}
+        {mode === "credit" && <CreditFlow currentMonth={currentMonth} onClose={onClose} onSave={handleSave} />}
         {mode === "other"  && <OtherFlow  onClose={onClose} onSave={handleSave} />}
       </SheetContent>
     </Sheet>

@@ -11,7 +11,8 @@ import AddIncomeSheet from "@/components/AddIncomeSheet";
 import AddExpenseSheet from "@/components/AddExpenseSheet";
 import PaymentCenterSheet from "@/components/PaymentCenterSheet";
 import { toast } from "@/hooks/useToast";
-import type { IncomeSource } from "@/lib/types";
+import { getCreditCards, getRecurringExpenses } from "@/lib/storage";
+import type { IncomeSource, Expense } from "@/lib/types";
 
 const INCOME_LABELS: Record<IncomeSource, string> = {
   salary: "工资",
@@ -19,16 +20,37 @@ const INCOME_LABELS: Record<IncomeSource, string> = {
   other:  "其他收入",
 };
 
-const EXPENSE_TYPE_LABELS: Record<string, string> = {
-  recurring: "固定支出",
-  credit:    "信用卡",
-  other:     "其他支出",
-  // legacy
-  fixed:     "固定支出",
-};
+// Build lookup maps once per render cycle (outside component to avoid re-reads)
+function buildExpenseLookups() {
+  const cards = getCreditCards();
+  const recurring = getRecurringExpenses();
+  const cardMap = Object.fromEntries(cards.map(c => [c.id, c]));
+  const recurringMap = Object.fromEntries(recurring.map(r => [r.id, r]));
+  return { cardMap, recurringMap };
+}
+
+function expenseSourceLabel(item: Expense, cardMap: Record<string, { name: string; last4: string }>, recurringMap: Record<string, { name: string }>): string {
+  const type = item.expenseType ?? item.category;
+  if (type === "credit") {
+    if (item.paymentSourceId && cardMap[item.paymentSourceId]) {
+      const c = cardMap[item.paymentSourceId];
+      return `${c.name} •••• ${c.last4}`;
+    }
+    return "信用卡";
+  }
+  if (type === "recurring" || type === "fixed") {
+    if (item.recurringId && recurringMap[item.recurringId]) {
+      return recurringMap[item.recurringId].name;
+    }
+    return item.note ?? "固定支出";
+  }
+  // other
+  return item.note ?? "其他支出";
+}
 
 export default function ManagementPage() {
   const { month, display, prev, next, isCurrentMonth } = useMonth();
+  const { cardMap, recurringMap } = buildExpenseLookups();
   const {
     income, expenses,
     totalIncome, totalExpense, balance, expenseRatio,
@@ -139,9 +161,8 @@ export default function ManagementPage() {
               <div key={item.id} className="flex items-center justify-between group">
                 <div className="flex items-center gap-2.5">
                   <span className="text-xs px-2.5 py-1 rounded-full bg-red-50 text-red-600 font-medium">
-                    {EXPENSE_TYPE_LABELS[item.expenseType ?? item.category]}
+                    {expenseSourceLabel(item, cardMap, recurringMap)}
                   </span>
-                  {item.note && <span className="text-xs text-muted-foreground">{item.note}</span>}
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold text-destructive">
