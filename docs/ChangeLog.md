@@ -15,6 +15,36 @@
 
 ---
 
+## [Beta 0.2.2] — 2026-07-26
+
+### Added
+- 中国资产 CNY 录入：`AssetSnapshot` 新增 `currency` / `rawAmount` 字段，中国资产存储人民币原始金额
+- 汇率设置：`ExchangeRateSettings { cnyToJpy: 20 }`，LocalStorage key `family-os-exchange-rates`
+- 资产页「汇率设置」入口：支持编辑 `1 CNY = X JPY`，修改后所有折算值立即重新计算
+- 资产页中国资产双行显示：`¥500,000 CNY` / `≈ ¥10,000,000 JPY`
+- `UpdateAssetsSheet` 和 `SingleAssetSheet` 中国资产输入标注 CNY，并实时显示折算预览
+- 家庭头像上传：`FamilyProfile { avatarDataUrl? }`，LocalStorage key `family-os-family-profile`
+- 头像自动居中裁切（512×512 canvas JPEG，quality 0.82），文件过大时弹出提示
+- 「家」页头像编辑入口（相机图标 + 文字链接），支持「恢复默认头像」
+- `RecurringExpense.amountType: "fixed" | "variable"` 替代旧 `amount` 字段
+- `RecurringExpense.referenceAmount?: number` 替代旧 `amount` 作为参考金额
+- 固定支出模板支持「每月变动」类型（电费、水费、煤气费等）
+- 经営页「本月待输入」区块：列出所有 enabled variable 模板中本月尚无支出记录的项目
+- 点击待输入项目直接打开新增支出 Sheet，预选模板、预填扣款日、金额为空并自动聚焦
+
+### Changed
+- `PaymentCenterSheet` RecurringForm：新增金额类型切换（固定金额 / 每月变动），字段名「参考金额」
+- `AddExpenseSheet` FixedFlow：variable 模板 placeholder 改为「请输入本月金额」
+- 模板列表展示：variable 显示「每月变动」，fixed 显示参考金额
+- `useAssets(month, cnyToJpy)` 新增第二参数，所有调用方（AssetsPage、ReviewPage）传入当前汇率
+- `getLatestNetAsset()` 读取 exchange rates 后进行 CNY→JPY 折算
+
+### Migration
+- `getRecurringExpenses()` 自动迁移旧 `amount` 字段：`amount > 0` → `fixed`，`amount = 0` → `variable`
+- 旧 `AssetSnapshot.amount` 继续兼容（非中国资产视为 JPY）
+
+---
+
 ## [Beta 0.2 Review Fix] — 2026-07-25
 
 ### Fixed

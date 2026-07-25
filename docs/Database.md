@@ -29,17 +29,35 @@ created_at  timestamptz default now()
 id          uuid primary key default gen_random_uuid()
 month       text not null     -- "YYYY-MM"
 group       text not null     -- "japan" | "china" | "investment" | "other"
-amount      bigint not null   -- 日元（整数），该月该分类的总资产额
+amount      bigint not null   -- 日元（整数，始终折算为 JPY，供计算使用）
+currency    text              -- "JPY" | "CNY"（Beta 0.2.2+，未设置视为 JPY）
+raw_amount  bigint            -- 原始金额（CNY；中国资产用，其他组未设置）
 updated_at  timestamptz       -- 用户更新时间（显示在 Hero）
 note        text
 unique (month, group)         -- 每月每分类只有一条记录（覆盖保存）
 ```
 
-**四大分类：**
-- `japan` — 日本资产（现金、存款、应急资金等）
-- `china` — 中国资产（国内银行、理财等）
-- `investment` — 投资资产（NISA、iDeCo、股票等）
-- `other` — 其它资产
+**四大分类及币种（Beta 0.2.2）：**
+- `japan` — 日本资产（JPY）
+- `china` — 中国资产（CNY；录入人民币，展示时换算为 JPY）
+- `investment` — 投资资产（JPY）
+- `other` — 其它资产（JPY）
+
+### `exchange_rate_settings` — 汇率设置（Beta 0.2.2+）
+
+```
+cny_to_jpy  float not null default 20   -- 人民币兑日元汇率
+```
+
+**LocalStorage key:** `family-os-exchange-rates`（直接 key，不使用冒号前缀）
+
+### `family_profile` — 家庭档案（Beta 0.2.2+）
+
+```
+avatar_data_url  text   -- 头像 Base64 Data URL（压缩至 512×512 JPEG）
+```
+
+**LocalStorage key:** `family-os-family-profile`（直接 key）
 
 ### `income` — 收入记录（月度）
 
@@ -68,18 +86,21 @@ created_at  timestamptz default now()
 
 **LocalStorage key:** `family-os:creditCards → CreditCard[]`
 
-### `recurring_expense` — 固定支出模板（Beta 0.2+）
+### `recurring_expense` — 固定支出模板（Beta 0.2 / 0.2.2 更新）
 
 ```sql
-id          uuid primary key default gen_random_uuid()
-name        text not null     -- 模板名称（必填）
-amount      bigint not null   -- 日元；0 表示金额变动（每次录入时输入）
-payment_day int               -- 每月支付日 1–31（可选）
-category    text not null     -- RecurringCategory（如 "housing" | "utility" 等）
-enabled     boolean default true
-note        text
-created_at  timestamptz default now()
+id               uuid primary key default gen_random_uuid()
+name             text not null     -- 模板名称（必填）
+category         text not null     -- RecurringCategory
+amount_type      text not null     -- "fixed" | "variable"（Beta 0.2.2+）
+reference_amount bigint            -- 参考金额（JPY）；fixed 时为默认金额；variable 时可选
+payment_day      int               -- 每月支付日 1–31（可选）
+enabled          boolean default true
+note             text
+created_at       timestamptz default now()
 ```
+
+**迁移说明：** 旧数据 `amount > 0` → `amount_type = "fixed"`, `reference_amount = amount`；`amount = 0` → `amount_type = "variable"`。迁移在 `getRecurringExpenses()` 中自动执行，无数据丢失。
 
 **LocalStorage key:** `family-os:recurringExpenses → RecurringExpense[]`
 
@@ -207,9 +228,11 @@ family-os:vehicles         → Vehicle[]          (车辆信息，Sprint 3+)
 family-os:documents        → FamilyDocument[]   (重要证件，Sprint 3+)
 family-os:milestones       → Milestone[]        (家庭时间线，Sprint 3+)
 family-os:monthlyReviews   → Timeline[]         (月度回顾，Sprint 4+，即 timeline 键)
-family-os:creditCards      → CreditCard[]       (信用卡列表，Beta 0.2+)
-family-os:recurringExpenses → RecurringExpense[] (固定支出模板，Beta 0.2+)
-family-os:settings         → Settings
+family-os:creditCards       → CreditCard[]        (信用卡列表，Beta 0.2+)
+family-os:recurringExpenses → RecurringExpense[]  (固定支出模板，Beta 0.2+/0.2.2)
+family-os:settings          → Settings
+family-os-exchange-rates    → ExchangeRateSettings (汇率，Beta 0.2.2+；直接 key 无冒号)
+family-os-family-profile    → FamilyProfile        (家庭头像，Beta 0.2.2+；直接 key 无冒号)
 ```
 
 > ⚠️ `family-os:assets`（旧 `Asset[]`）已废弃，不再写入。读取方优先使用 `family-os:assetSnapshots`。

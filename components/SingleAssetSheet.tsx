@@ -7,17 +7,18 @@ import { BottomSheet, SaveButton, CancelButton } from "@/components/editing";
 
 interface Props {
   group: AssetGroup;
-  currentAmount: number;
+  currentAmount: number; // CNY for china, JPY otherwise
+  cnyToJpy: number;
   currentMonth: string;
   open: boolean;
   onClose: () => void;
   onSave: (group: AssetGroup, amount: number) => void;
 }
 
-// Caller must pass key={group} so this remounts when group changes.
 function SingleAssetForm({
   group,
   currentAmount,
+  cnyToJpy,
   currentMonth,
   onClose,
   onSave,
@@ -26,7 +27,12 @@ function SingleAssetForm({
   const [y, m] = currentMonth.split("-");
   const displayMonth = `${y}年${parseInt(m)}月`;
   const meta = GROUP_META[group];
+  const isCny = group === "china";
   const canSave = parseInt(value.replace(/,/g, "")) >= 0 && value.trim() !== "";
+
+  const jpyEquiv = isCny && parseInt(value) > 0
+    ? Math.round(parseInt(value.replace(/,/g, "")) * cnyToJpy)
+    : 0;
 
   function handleSave() {
     const amount = parseInt(value.replace(/,/g, "")) || 0;
@@ -36,7 +42,10 @@ function SingleAssetForm({
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-muted-foreground">{displayMonth} · {meta.label}</p>
+      <p className="text-xs text-muted-foreground">
+        {displayMonth} · {meta.label}
+        {isCny && <span className="ml-1 text-orange-500">（CNY）</span>}
+      </p>
 
       <div>
         <label className="text-xs font-medium text-muted-foreground mb-1.5 block">金额</label>
@@ -49,9 +58,17 @@ function SingleAssetForm({
             value={value}
             onChange={e => setValue(e.target.value)}
             autoFocus
-            className="w-full pl-8 pr-3.5 py-3 bg-muted rounded-2xl text-sm text-foreground outline-none focus:ring-1 focus:ring-primary transition-shadow"
+            className="w-full pl-8 pr-16 py-3 bg-muted rounded-2xl text-sm text-foreground outline-none focus:ring-1 focus:ring-primary transition-shadow"
           />
+          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+            {isCny ? "CNY" : "JPY"}
+          </span>
         </div>
+        {isCny && jpyEquiv > 0 && (
+          <p className="text-xs text-muted-foreground mt-1 ml-1">
+            ≈ ¥{jpyEquiv.toLocaleString()} JPY（1 CNY = {cnyToJpy} JPY）
+          </p>
+        )}
       </div>
 
       <div className="pt-2 space-y-2">
@@ -62,13 +79,14 @@ function SingleAssetForm({
   );
 }
 
-export default function SingleAssetSheet({ open, group, currentAmount, currentMonth, onClose, onSave }: Props) {
+export default function SingleAssetSheet({ open, group, currentAmount, cnyToJpy, currentMonth, onClose, onSave }: Props) {
   return (
     <BottomSheet open={open} onClose={onClose} title={`更新${GROUP_META[group].label}`}>
       {open && (
         <SingleAssetForm
           group={group}
           currentAmount={currentAmount}
+          cnyToJpy={cnyToJpy}
           currentMonth={currentMonth}
           onClose={onClose}
           onSave={onSave}

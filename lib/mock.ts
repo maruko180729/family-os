@@ -198,16 +198,16 @@ export const mockCreditCards: CreditCard[] = [
   { id: "cc3", name: "楽天カード",   last4: "8888", billingDay: 27, paymentDay: 27, isDefault: false },
 ];
 
-// Beta 0.2 — Recurring Expense Templates
+// Beta 0.2 — Recurring Expense Templates (Beta 0.2.2: amountType)
 export const mockRecurringExpenses: RecurringExpense[] = [
-  { id: "re1", name: "房租",      amount: 120000, paymentDay: 1,  category: "房屋",    enabled: true },
-  { id: "re2", name: "东京电力",  amount: 8000,   paymentDay: 28, category: "水电燃气", enabled: true },
-  { id: "re3", name: "东京煤气",  amount: 4000,   paymentDay: 28, category: "水电燃气", enabled: true },
-  { id: "re4", name: "网络",      amount: 5000,   paymentDay: 5,  category: "通讯",    enabled: true },
-  { id: "re5", name: "手机",      amount: 3000,   paymentDay: 5,  category: "通讯",    enabled: true },
-  { id: "re6", name: "Netflix",   amount: 1980,   paymentDay: 12, category: "娱乐",    enabled: true },
-  { id: "re7", name: "ChatGPT",   amount: 3000,   paymentDay: 8,  category: "AI订阅",  enabled: true },
-  { id: "re8", name: "Claude",    amount: 3000,   paymentDay: 8,  category: "AI订阅",  enabled: true },
+  { id: "re1", name: "房租",     category: "房屋",    amountType: "fixed",    referenceAmount: 120000, paymentDay: 1,  enabled: true },
+  { id: "re2", name: "东京电力", category: "水电燃气", amountType: "variable",                          paymentDay: 27, enabled: true },
+  { id: "re3", name: "东京煤气", category: "水电燃气", amountType: "variable",                          paymentDay: 28, enabled: true },
+  { id: "re4", name: "网络",     category: "通讯",    amountType: "fixed",    referenceAmount: 5000,   paymentDay: 5,  enabled: true },
+  { id: "re5", name: "手机",     category: "通讯",    amountType: "fixed",    referenceAmount: 3000,   paymentDay: 5,  enabled: true },
+  { id: "re6", name: "Netflix",  category: "娱乐",    amountType: "fixed",    referenceAmount: 1980,   paymentDay: 12, enabled: true },
+  { id: "re7", name: "ChatGPT",  category: "AI订阅",  amountType: "fixed",    referenceAmount: 3000,   paymentDay: 8,  enabled: true },
+  { id: "re8", name: "Claude",   category: "AI订阅",  amountType: "fixed",    referenceAmount: 3000,   paymentDay: 8,  enabled: true },
 ];
 
 export function getPendingReminders(): Reminder[] {

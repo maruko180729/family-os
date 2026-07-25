@@ -41,12 +41,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Status
 
-**Beta 0.2 — Payment Management**
+**Beta 0.2.2 — Multi-Currency Assets, Home Avatar, Variable Recurring Payments**
 
 - ✅ Sprint 0–6: Foundation, 経営, Assets, Growth, Review, Family module, editing
 - ✅ Hotfix: Income/expense date attribution by `date` field, not page month
 - ✅ Beta 0.2: CreditCard + RecurringExpense data models, Payment Center UI
 - ✅ Beta 0.2 Review Fix: Payment date defaults, expense source display
+- ✅ Beta 0.2.2: China assets in CNY + exchange rate, family avatar, variable recurring payments
 - 🔜 Beta 0.3: Auto recurring billing, Supabase migration
 
 ## Docs

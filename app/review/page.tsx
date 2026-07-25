@@ -7,6 +7,7 @@ import { SectionCard } from "@/components/ui/SectionCard";
 import { InputCard } from "@/components/ui/InputCard";
 import { useMonth } from "@/hooks/useMonth";
 import { useAssets } from "@/hooks/useAssets";
+import { useExchangeRates } from "@/hooks/useExchangeRates";
 import { useManagement } from "@/hooks/useManagement";
 import { useReview } from "@/hooks/useReview";
 import { lastReviewableMonth } from "@/lib/utils";
@@ -26,7 +27,8 @@ function generateAiSummary(hasData: boolean, netChange: number, events: string, 
 
 export default function ReviewPage() {
   const { month, display, prev, next } = useMonth(-1);
-  const { netAsset: netAssetEnd, monthlyChange: netChange, hasData } = useAssets(month);
+  const { rates } = useExchangeRates();
+  const { netAsset: netAssetEnd, monthlyChange: netChange, hasData } = useAssets(month, rates.cnyToJpy);
   const netAssetStart = netAssetEnd - netChange;
   const { totalIncome, totalExpense } = useManagement(month);
   const { entry, status, update, save } = useReview(month);

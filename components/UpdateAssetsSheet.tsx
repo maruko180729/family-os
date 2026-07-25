@@ -10,16 +10,16 @@ const GROUPS: AssetGroup[] = ["japan", "china", "investment", "other"];
 interface Props {
   open: boolean;
   currentMonth: string;
-  currentAmounts: Record<AssetGroup, number>;
+  currentAmounts: Record<AssetGroup, number>; // china = CNY raw
+  cnyToJpy: number;
   onClose: () => void;
   onSave: (amounts: Record<AssetGroup, number>) => void;
 }
 
-// Inner form — mounts fresh each time the sheet opens, so useState
-// initializers run from props without needing useEffect.
 function AssetsForm({
   currentMonth,
   currentAmounts,
+  cnyToJpy,
   onClose,
   onSave,
 }: Omit<Props, "open">) {
@@ -45,21 +45,29 @@ function AssetsForm({
   const displayMonth = `${y}年${parseInt(m)}月`;
   const canSave = GROUPS.some(g => parseInt(values[g].replace(/,/g, "")) > 0);
 
+  const chinaJpy = (() => {
+    const raw = parseInt(values.china.replace(/,/g, ""));
+    return raw > 0 ? Math.round(raw * cnyToJpy) : 0;
+  })();
+
   return (
     <>
       <SheetHeader className="mb-1">
         <SheetTitle className="text-lg font-semibold text-left">更新资产快照</SheetTitle>
       </SheetHeader>
-      <p className="text-xs text-muted-foreground mb-5">{displayMonth}·输入各类资产当前总额</p>
+      <p className="text-xs text-muted-foreground mb-5">{displayMonth} · 输入各类资产当前总额</p>
 
       <div className="space-y-3 mb-6">
         {GROUPS.map((g, i) => (
           <div key={g}>
             <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
               {GROUP_META[g].label}
+              {g === "china" && <span className="ml-1 text-orange-500">（CNY）</span>}
             </label>
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">¥</span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+                {g === "china" ? "¥" : "¥"}
+              </span>
               <input
                 type="number"
                 inputMode="numeric"
@@ -67,9 +75,17 @@ function AssetsForm({
                 value={values[g]}
                 onChange={e => setValues(prev => ({ ...prev, [g]: e.target.value }))}
                 autoFocus={i === 0}
-                className="w-full pl-8 pr-3.5 py-3 bg-muted rounded-2xl text-sm text-foreground outline-none focus:ring-1 focus:ring-primary transition-shadow"
+                className="w-full pl-8 pr-16 py-3 bg-muted rounded-2xl text-sm text-foreground outline-none focus:ring-1 focus:ring-primary transition-shadow"
               />
+              <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                {g === "china" ? "CNY" : "JPY"}
+              </span>
             </div>
+            {g === "china" && chinaJpy > 0 && (
+              <p className="text-xs text-muted-foreground mt-1 ml-1">
+                ≈ ¥{chinaJpy.toLocaleString()} JPY（1 CNY = {cnyToJpy} JPY）
+              </p>
+            )}
           </div>
         ))}
       </div>
@@ -85,7 +101,7 @@ function AssetsForm({
   );
 }
 
-export default function UpdateAssetsSheet({ open, currentMonth, currentAmounts, onClose, onSave }: Props) {
+export default function UpdateAssetsSheet({ open, currentMonth, currentAmounts, cnyToJpy, onClose, onSave }: Props) {
   return (
     <Sheet open={open} onOpenChange={v => !v && onClose()}>
       <SheetContent side="bottom" className="rounded-t-3xl px-5 pb-10 pt-6 max-w-[480px] mx-auto">
@@ -93,6 +109,7 @@ export default function UpdateAssetsSheet({ open, currentMonth, currentAmounts, 
           <AssetsForm
             currentMonth={currentMonth}
             currentAmounts={currentAmounts}
+            cnyToJpy={cnyToJpy}
             onClose={onClose}
             onSave={onSave}
           />

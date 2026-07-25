@@ -54,9 +54,10 @@ export type RecurringCategory = "房屋" | "水电燃气" | "通讯" | "AI订阅
 export interface RecurringExpense {
   id: string;
   name: string;
-  amount: number;       // default amount (JPY)
-  paymentDay?: number;  // default day of month
   category: RecurringCategory;
+  amountType: "fixed" | "variable"; // "fixed" = set amount; "variable" = enter monthly
+  referenceAmount?: number;          // JPY; for fixed: the default; for variable: optional reference
+  paymentDay?: number;
   enabled: boolean;
   note?: string;
 }
@@ -117,13 +118,27 @@ export interface Timeline {
 // Monthly snapshot: user enters current total per group once a month
 export type AssetGroup = "japan" | "china" | "investment" | "other";
 
+// Beta 0.2.2 — Multi-currency
+export type Currency = "JPY" | "CNY";
+
+export interface ExchangeRateSettings {
+  cnyToJpy: number; // default 20
+}
+
 export interface AssetSnapshot {
   id: string;
-  month: string;      // "YYYY-MM"
+  month: string;       // "YYYY-MM"
   group: AssetGroup;
-  amount: number;     // JPY integer, total for this group
-  updatedAt?: string; // ISO date string, set on save
+  amount: number;      // always JPY integer (converted for CNY groups)
+  currency?: Currency; // undefined = JPY
+  rawAmount?: number;  // original amount in native currency (e.g. CNY)
+  updatedAt?: string;
   note?: string;
+}
+
+// Beta 0.2.2 — Family Profile (avatar)
+export interface FamilyProfile {
+  avatarDataUrl?: string;
 }
 
 export interface AppSettings {

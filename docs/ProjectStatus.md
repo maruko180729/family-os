@@ -6,7 +6,7 @@
 
 ## 当前版本
 
-**Beta 0.2** — Payment Management 已完成，Review Fix 已通过
+**Beta 0.2.2** — Multi-Currency Assets, Home Avatar, Variable Recurring Payments
 
 ---
 
@@ -21,6 +21,7 @@
 | Sprint 4 | 月度回顾 | ✅ 已通过 |
 | Beta 0.2 | CreditCard + RecurringExpense + Payment Center | ✅ 已通过 |
 | Beta 0.2 Fix | 支付日默认、来源显示、字段校验修复 | ✅ 已通过 |
+| Beta 0.2.2 | 中国资产 CNY、家庭头像、浮动固定支出 | ✅ 已通过 |
 | Beta 0.3 | 固定支出自动账单、Supabase 迁移 | 🔜 计划中 |
 
 ---
@@ -28,8 +29,8 @@
 ## 已上线功能
 
 - `/` 今天：家庭概览、净资产（读取真实资产快照）、待办提醒
-- `/management` 経営：月度收支录入、AI 顾问、支付管理（信用卡 + 固定支出模板）
-- `/assets` 资产：月度快照、趋势折线图、分类展示
+- `/management` 経営：月度收支录入、AI 顾问、支付管理（信用卡 + 固定支出模板）、本月待输入（浮动项目）
+- `/assets` 资产：月度快照、趋势折线图、分类展示（中国资产 CNY + JPY 双显）、汇率设置
 - `/growth` 未来：目标管理（家庭净资产目标读取真实数据）
 - `/family` 家：家庭理念、家庭成员、Maruko、公司、车辆、证件、家庭时间线
 

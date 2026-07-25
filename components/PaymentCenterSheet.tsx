@@ -9,84 +9,55 @@ import { useCreditCards } from "@/hooks/useCreditCards";
 import { useRecurringExpenses } from "@/hooks/useRecurringExpenses";
 import { toast } from "@/hooks/useToast";
 
-// ── Shared ────────────────────────────────────────────────────────────────
 const RECURRING_CATEGORIES: RecurringCategory[] = [
   "房屋", "水电燃气", "通讯", "AI订阅", "娱乐", "保险", "税金", "其他"
 ];
 
 // ── Credit Card Form ───────────────────────────────────────────────────────
 function CardForm({
-  initial,
-  onSave,
-  onCancel,
+  initial, onSave, onCancel,
 }: {
   initial?: CreditCard;
   onSave: (data: Omit<CreditCard, "id">) => void;
   onCancel: () => void;
 }) {
-  const [name, setName]           = useState(initial?.name ?? "");
-  const [last4, setLast4]         = useState(initial?.last4 ?? "");
-  const [billingDay, setBilling]  = useState(initial?.billingDay ? String(initial.billingDay) : "");
-  const [paymentDay, setPayment]  = useState(initial?.paymentDay ? String(initial.paymentDay) : "");
-  const [isDefault, setDefault]   = useState(initial?.isDefault ?? false);
+  const [name, setName]         = useState(initial?.name ?? "");
+  const [last4, setLast4]       = useState(initial?.last4 ?? "");
+  const [billingDay, setBilling] = useState(initial?.billingDay ? String(initial.billingDay) : "");
+  const [paymentDay, setPayment] = useState(initial?.paymentDay ? String(initial.paymentDay) : "");
+  const [isDefault, setDefault]  = useState(initial?.isDefault ?? false);
 
-  const payDay = Number(paymentDay);
+  const payDay  = Number(paymentDay);
   const billDay = Number(billingDay);
-  const payDayValid = !paymentDay || (payDay >= 1 && payDay <= 31);
-  const billDayValid = !billingDay || (billDay >= 1 && billDay <= 31);
+  const payDayValid  = !paymentDay  || (payDay  >= 1 && payDay  <= 31);
+  const billDayValid = !billingDay  || (billDay >= 1 && billDay <= 31);
   const canSave = name.trim().length > 0 && /^\d{4}$/.test(last4) && payDayValid && billDayValid;
 
   return (
     <div className="space-y-3 py-3">
       <div>
         <label className="text-xs font-medium text-muted-foreground mb-1 block">卡片名称</label>
-        <input
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder="AMEX Gold"
-          autoFocus
-          className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary"
-        />
+        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="AMEX Gold" autoFocus
+          className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary" />
       </div>
       <div>
         <label className="text-xs font-medium text-muted-foreground mb-1 block">卡号后四位</label>
-        <input
-          type="text"
-          inputMode="numeric"
-          maxLength={4}
-          value={last4}
-          onChange={e => setLast4(e.target.value.replace(/\D/g, "").slice(0, 4))}
-          placeholder="1234"
-          className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary font-mono"
-        />
+        <input type="text" inputMode="numeric" maxLength={4} value={last4}
+          onChange={e => setLast4(e.target.value.replace(/\D/g, "").slice(0, 4))} placeholder="1234"
+          className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary font-mono" />
       </div>
       <div className="flex gap-2">
         <div className="flex-1">
           <label className="text-xs font-medium text-muted-foreground mb-1 block">账单日</label>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={31}
-            placeholder="1"
-            value={billingDay}
+          <input type="number" inputMode="numeric" min={1} max={31} placeholder="1" value={billingDay}
             onChange={e => setBilling(e.target.value)}
-            className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary"
-          />
+            className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary" />
         </div>
         <div className="flex-1">
           <label className="text-xs font-medium text-muted-foreground mb-1 block">扣款日</label>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={31}
-            placeholder="26"
-            value={paymentDay}
+          <input type="number" inputMode="numeric" min={1} max={31} placeholder="26" value={paymentDay}
             onChange={e => setPayment(e.target.value)}
-            className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary"
-          />
+            className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary" />
         </div>
       </div>
       <label className="flex items-center gap-2 cursor-pointer">
@@ -94,19 +65,12 @@ function CardForm({
         <span className="text-sm text-foreground">设为默认</span>
       </label>
       <div className="flex gap-2 pt-1">
-        <button
-          onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl bg-muted text-muted-foreground text-sm font-medium"
-        >
-          取消
-        </button>
+        <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl bg-muted text-muted-foreground text-sm font-medium">取消</button>
         <button
           onClick={() => onSave({ name: name.trim(), last4, billingDay: billDay >= 1 && billDay <= 31 ? billDay : undefined, paymentDay: payDay >= 1 && payDay <= 31 ? payDay : undefined, isDefault })}
           disabled={!canSave}
           className="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold disabled:opacity-40"
-        >
-          保存
-        </button>
+        >保存</button>
       </div>
     </div>
   );
@@ -114,117 +78,96 @@ function CardForm({
 
 // ── Recurring Expense Form ─────────────────────────────────────────────────
 function RecurringForm({
-  initial,
-  onSave,
-  onCancel,
+  initial, onSave, onCancel,
 }: {
   initial?: RecurringExpense;
   onSave: (data: Omit<RecurringExpense, "id">) => void;
   onCancel: () => void;
 }) {
-  const [name, setName]             = useState(initial?.name ?? "");
-  // amount: empty string means "variable each month" (saved as 0)
-  const [amount, setAmount]         = useState(initial !== undefined ? String(initial.amount) : "");
-  const [paymentDay, setPayDay]     = useState(initial?.paymentDay ? String(initial.paymentDay) : "");
-  const [category, setCategory]     = useState<RecurringCategory>(initial?.category ?? "其他");
-  const [enabled, setEnabled]       = useState(initial?.enabled ?? true);
-  const [note, setNote]             = useState(initial?.note ?? "");
+  const [name, setName]               = useState(initial?.name ?? "");
+  const [amountType, setAmountType]   = useState<"fixed" | "variable">(initial?.amountType ?? "fixed");
+  const [refAmount, setRefAmount]     = useState(initial?.referenceAmount ? String(initial.referenceAmount) : "");
+  const [paymentDay, setPayDay]       = useState(initial?.paymentDay ? String(initial.paymentDay) : "");
+  const [category, setCategory]       = useState<RecurringCategory>(initial?.category ?? "其他");
+  const [enabled, setEnabled]         = useState(initial?.enabled ?? true);
+  const [note, setNote]               = useState(initial?.note ?? "");
 
   const payDay = Number(paymentDay);
   const payDayValid = !paymentDay || (payDay >= 1 && payDay <= 31);
-  // amount="" is allowed (means variable); only block non-numeric garbage
-  const amountNum = amount === "" ? 0 : Number(amount);
-  const amountValid = amount === "" || (!isNaN(amountNum) && amountNum >= 0);
-  const canSave = name.trim().length > 0 && amountValid && payDayValid;
+  const refNum = refAmount === "" ? undefined : Number(refAmount);
+  const refValid = refAmount === "" || (!isNaN(refNum!) && refNum! >= 0);
+  const canSave = name.trim().length > 0 && refValid && payDayValid;
 
   return (
     <div className="space-y-3 py-3">
       <div>
         <label className="text-xs font-medium text-muted-foreground mb-1 block">名称</label>
-        <input
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder="Netflix"
-          autoFocus
-          className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary"
-        />
+        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Netflix" autoFocus
+          className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary" />
       </div>
+
+      <div>
+        <label className="text-xs font-medium text-muted-foreground mb-1 block">金额类型</label>
+        <div className="flex gap-2">
+          {(["fixed", "variable"] as const).map(t => (
+            <button key={t} onClick={() => setAmountType(t)}
+              className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors ${amountType === t ? "bg-primary text-white" : "bg-muted text-muted-foreground"}`}>
+              {t === "fixed" ? "固定金额" : "每月变动"}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="flex gap-2">
         <div className="flex-1">
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">默认金额</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+            参考金额{amountType === "variable" && <span className="text-muted-foreground/60 ml-1">（可选）</span>}
+          </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">¥</span>
-            <input
-              type="number"
-              inputMode="numeric"
-              placeholder="0"
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-              className="w-full pl-7 pr-3 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary"
-            />
+            <input type="number" inputMode="numeric" placeholder={amountType === "variable" ? "—" : "0"}
+              value={refAmount} onChange={e => setRefAmount(e.target.value)}
+              className="w-full pl-7 pr-3 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary" />
           </div>
         </div>
         <div className="w-24">
           <label className="text-xs font-medium text-muted-foreground mb-1 block">扣款日</label>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={31}
-            placeholder="1"
-            value={paymentDay}
+          <input type="number" inputMode="numeric" min={1} max={31} placeholder="1" value={paymentDay}
             onChange={e => setPayDay(e.target.value)}
-            className="w-full px-3 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary"
-          />
+            className="w-full px-3 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary" />
         </div>
       </div>
+
       <div>
         <label className="text-xs font-medium text-muted-foreground mb-1 block">分类</label>
         <div className="flex flex-wrap gap-1.5">
           {RECURRING_CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                category === cat
-                  ? "bg-primary text-white"
-                  : "bg-muted text-muted-foreground"
-              }`}
-            >
+            <button key={cat} onClick={() => setCategory(cat)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${category === cat ? "bg-primary text-white" : "bg-muted text-muted-foreground"}`}>
               {cat}
             </button>
           ))}
         </div>
       </div>
+
       <div>
         <label className="text-xs font-medium text-muted-foreground mb-1 block">备注（可选）</label>
-        <input
-          type="text"
-          value={note}
-          onChange={e => setNote(e.target.value)}
-          placeholder=""
-          className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary"
-        />
+        <input type="text" value={note} onChange={e => setNote(e.target.value)} placeholder=""
+          className="w-full px-3.5 py-2.5 bg-muted rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary" />
       </div>
+
       <label className="flex items-center gap-2 cursor-pointer">
         <input type="checkbox" checked={enabled} onChange={e => setEnabled(e.target.checked)} className="accent-primary" />
         <span className="text-sm text-foreground">已启用</span>
       </label>
+
       <div className="flex gap-2 pt-1">
+        <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl bg-muted text-muted-foreground text-sm font-medium">取消</button>
         <button
-          onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl bg-muted text-muted-foreground text-sm font-medium"
-        >
-          取消
-        </button>
-        <button
-          onClick={() => onSave({ name: name.trim(), amount: amountNum, paymentDay: payDay >= 1 && payDay <= 31 ? payDay : undefined, category, enabled, note: note.trim() || undefined })}
+          onClick={() => onSave({ name: name.trim(), category, amountType, referenceAmount: refNum, paymentDay: payDay >= 1 && payDay <= 31 ? payDay : undefined, enabled, note: note.trim() || undefined })}
           disabled={!canSave}
           className="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold disabled:opacity-40"
-        >
-          保存
-        </button>
+        >保存</button>
       </div>
     </div>
   );
@@ -233,26 +176,17 @@ function RecurringForm({
 // ── Main sheet ─────────────────────────────────────────────────────────────
 type Tab = "recurring" | "cards";
 
-interface Props {
-  open: boolean;
-  onClose: () => void;
-}
-
-export default function PaymentCenterSheet({ open, onClose }: Props) {
+export default function PaymentCenterSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { cards, addCard, updateCard, deleteCard } = useCreditCards();
   const { items, addItem, updateItem, toggleItem, deleteItem } = useRecurringExpenses();
 
   const [tab, setTab] = useState<Tab>("recurring");
-
-  // Card state
-  const [addingCard, setAddingCard]       = useState(false);
-  const [editingCard, setEditingCard]     = useState<CreditCard | null>(null);
-  const [deleteCardId, setDeleteCardId]   = useState<string | null>(null);
-
-  // Recurring state
-  const [addingItem, setAddingItem]       = useState(false);
-  const [editingItem, setEditingItem]     = useState<RecurringExpense | null>(null);
-  const [deleteItemId, setDeleteItemId]   = useState<string | null>(null);
+  const [addingCard, setAddingCard]     = useState(false);
+  const [editingCard, setEditingCard]   = useState<CreditCard | null>(null);
+  const [deleteCardId, setDeleteCardId] = useState<string | null>(null);
+  const [addingItem, setAddingItem]     = useState(false);
+  const [editingItem, setEditingItem]   = useState<RecurringExpense | null>(null);
+  const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
 
   return (
     <>
@@ -262,22 +196,15 @@ export default function PaymentCenterSheet({ open, onClose }: Props) {
             <SheetTitle className="text-lg font-semibold text-left">支付管理</SheetTitle>
           </SheetHeader>
 
-          {/* Tabs */}
           <div className="flex gap-2 mb-5">
             {([["recurring", "固定支出"], ["cards", "信用卡"]] as [Tab, string][]).map(([t, label]) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`flex-1 py-2.5 rounded-2xl text-sm font-medium transition-colors ${
-                  tab === t ? "bg-primary text-white" : "bg-muted text-muted-foreground"
-                }`}
-              >
+              <button key={t} onClick={() => setTab(t)}
+                className={`flex-1 py-2.5 rounded-2xl text-sm font-medium transition-colors ${tab === t ? "bg-primary text-white" : "bg-muted text-muted-foreground"}`}>
                 {label}
               </button>
             ))}
           </div>
 
-          {/* ── Recurring Expenses Tab ── */}
           {tab === "recurring" && (
             <div className="space-y-2">
               {items.map(item => (
@@ -291,13 +218,17 @@ export default function PaymentCenterSheet({ open, onClose }: Props) {
                   ) : (
                     <div className="flex items-center gap-3 px-4 py-3 bg-muted rounded-2xl">
                       <button onClick={() => toggleItem(item.id)} className="shrink-0 text-muted-foreground">
-                        {item.enabled
-                          ? <ToggleRight size={20} className="text-primary" />
-                          : <ToggleLeft size={20} />}
+                        {item.enabled ? <ToggleRight size={20} className="text-primary" /> : <ToggleLeft size={20} />}
                       </button>
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-medium ${!item.enabled && "text-muted-foreground line-through"}`}>{item.name}</p>
-                        <p className="text-xs text-muted-foreground">{item.category} · ¥{item.amount.toLocaleString()}{item.paymentDay ? ` · ${item.paymentDay}日` : ""}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {item.category}
+                          {item.amountType === "variable"
+                            ? " · 每月变动"
+                            : item.referenceAmount ? ` · ¥${item.referenceAmount.toLocaleString()}` : ""}
+                          {item.paymentDay ? ` · ${item.paymentDay}日` : ""}
+                        </p>
                       </div>
                       <button onClick={() => setEditingItem(item)} className="p-1.5 text-muted-foreground hover:text-foreground">
                         <Pencil size={13} />
@@ -316,17 +247,14 @@ export default function PaymentCenterSheet({ open, onClose }: Props) {
                   onCancel={() => setAddingItem(false)}
                 />
               ) : (
-                <button
-                  onClick={() => setAddingItem(true)}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-dashed border-border text-muted-foreground text-sm hover:text-foreground transition-colors"
-                >
+                <button onClick={() => setAddingItem(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-dashed border-border text-muted-foreground text-sm hover:text-foreground transition-colors">
                   <Plus size={14} /> 新增固定支出
                 </button>
               )}
             </div>
           )}
 
-          {/* ── Credit Cards Tab ── */}
           {tab === "cards" && (
             <div className="space-y-2">
               {cards.map(card => (
@@ -365,10 +293,8 @@ export default function PaymentCenterSheet({ open, onClose }: Props) {
                   onCancel={() => setAddingCard(false)}
                 />
               ) : (
-                <button
-                  onClick={() => setAddingCard(true)}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-dashed border-border text-muted-foreground text-sm hover:text-foreground transition-colors"
-                >
+                <button onClick={() => setAddingCard(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-dashed border-border text-muted-foreground text-sm hover:text-foreground transition-colors">
                   <Plus size={14} /> 新增信用卡
                 </button>
               )}
